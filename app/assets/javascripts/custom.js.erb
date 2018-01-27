@@ -1,0 +1,282 @@
+$(document).ready(function() {
+  var ctrlDown = false;
+  var ctrlKey = 17, cKey = 67;
+
+  $(document).keydown(function(e) {
+    if (e.keyCode == ctrlKey)
+      ctrlDown = true;
+  }).keyup(function(e) {
+    if (e.keyCode == ctrlKey)
+      ctrlDown = false;
+  });
+
+  jQuery.fn.selectText = function() {
+    var doc = document;
+    var element = this[0];
+    var range;
+    if (doc.body.createTextRange) {
+      range = document.body.createTextRange();
+      range.moveToElementText(element);
+      range.select();
+    } else if (window.getSelection) {
+      var selection = window.getSelection();
+      range = document.createRange();
+      range.selectNodeContents(element);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  };
+
+  var minecraftIp = $('.minecraft-ip');
+  minecraftIp.keydown(function(e) {
+    if (!ctrlDown || cKey != e.keyCode) {
+      e.preventDefault();
+    }
+  });
+
+  minecraftIp.click(function() {
+    minecraftIp.selectText();
+  });
+
+  /*/
+  /*  Make remote <a> links open a new tab.
+  /*/
+  $('a').each(function() {
+     var a = new RegExp('/' + window.location.host + '/');
+     if (!a.test(this.href)) {
+        $(this).attr("target","_blank");
+     }
+  });
+
+  var body = $('body');
+
+  body.tooltip({
+    selector: '[rel=tooltip]',
+    html: true
+  });
+  body.tooltip({
+    selector: '[rel=tooltip-left]',
+    placement: 'left',
+    html: true
+  });
+  body.tooltip({
+    selector: '[rel=tooltip-right]',
+    placement: 'right',
+    html: true
+  });
+  body.tooltip({
+    selector: '[rel=tooltip-down]',
+    placement: 'bottom',
+    html: true
+  });
+
+  $('[rel=fancy]').wysihtml5({
+      "style": true,
+      "font-styles": false,
+      "emphasis": true,
+      "lists": true,
+      "html": true,
+      "link": true,
+      "image": true,
+      "color": false,
+      parser: function(html) {
+          return html;
+      }
+  });
+
+  $(".auto-submit").change(function() {
+      $(this).closest("form").submit();
+  });
+
+  $(document).ready(function() {
+  	var current_time = new Date();
+  	$.cookie('time_zone', current_time.getTimezoneOffset());
+  } );
+
+  $(function(){
+    var hash = window.location.hash;
+    hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+    $('.nav-tabs a').click(function (e) {
+      $(this).tab('show');
+      var scrollmem = body.scrollTop();
+      window.location.hash = this.hash;
+      $('html,body').scrollTop(scrollmem);
+    });
+  });
+
+  $('.username').keyup(function(e) {
+  	var value = $(this).val();
+  	$("#" + $(this).attr("rel") + " .username").each(function() {
+  		$(this).val(value);
+  	});
+  });
+
+  jQuery.fn.preventDoubleSubmission = function() {
+    $(this).on('submit',function(e){
+      var $form = $(this);
+
+      if ($form.data('submitted') === true) {
+        e.preventDefault();
+      } else {
+        $form.data('submitted', true);
+      }
+    });
+    return this;
+  };
+  $('form').preventDoubleSubmission();
+
+  $('.typeahead').each(function() {
+    var path = "/users/search";
+
+    if ($(this).attr("rel-path") != null)
+      path = $(this).attr("rel-path");
+
+    if ($(this).attr("rel-data") != null) {
+      $(this).typeahead({
+        source: JSON.parse($(this).attr("rel-data"))
+      })
+    }
+    else {
+      $(this).typeahead({
+        source: function (query, process) {
+          return $.get(path, { query: query }, function (data) {
+            return process(data);
+          });
+        }
+      });
+    }
+  });
+
+  $('.typeahead').on('change', function() {
+    var redirect = $(this).attr("rel-redirect");
+    if (redirect == null)
+      return;
+
+    var to = redirect.replace("<value>", $(this).val());
+    window.location = to;
+  });
+
+
+  var targetNormal = $('.target').html();
+
+  if ($('.update').val()) {
+  	targetNormal = $('.update').val();
+  	$(".target").html(targetNormal);
+  }
+
+  $('.update').keyup(function(e){
+  	if ($(this).val()) {
+  		var keyed = $(this).val().replace(/[\n]/g,'<br />');
+  		$(".target").html(keyed);
+  	}
+  	else {
+  		$('.target').html(targetNormal);
+  	}
+  });
+
+  $('.online').tooltip({
+    title: "Currently online."
+  });
+
+  $('body').on('click', '.toggle-slide', function() {
+  	$($(this).attr('rel')).slideToggle();
+  	if ($(this).hasClass("fa fa-caret-up")) {
+  		$(this).removeClass("fa fa-caret-up");
+  		$(this).addClass("fa fa-caret-down");
+  	}
+  	else {
+  		$(this).removeClass("fa fa-caret-down");
+  		$(this).addClass("fa fa-caret-up");
+  	}
+  });
+
+  body.on('click', '.toggle-ancestor', function(e) {
+    e.preventDefault();
+  	$($(this).attr('rel-ancestor')).slideToggle();
+  	if ($(this).hasClass("fa fa-caret-up")) {
+  		$(this).removeClass("fa fa-caret-up");
+  		$(this).addClass("fa fa-caret-down");
+  	}
+  	else {
+  		$(this).removeClass("fa fa-caret-down");
+  		$(this).addClass("fa fa-caret-up");
+  	}
+  });
+
+  var position = $("hr.highlight").position();
+  if (position != null) {
+      scroll(0, position.top);
+  }
+
+  <% paths = Rails.application.routes.url_helpers %>
+
+  $('#react_modal').modal('hide');
+    $('.react').click(function(e) {
+      e.preventDefault();
+      var postId = $(this).attr('rel-post-uuid');
+      $('.post-uuid').each(function() {
+        $(this).val(postId);
+      });
+      $('#react_modal').modal('show');
+  });
+
+  $(function() {
+    $('.scroll').click(function() {
+      if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+        var target = $(this.hash);
+        target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+        if (target.length) {
+          $('html,body').animate({
+            scrollTop: target.offset().top
+          }, 1000);
+          return false;
+        }
+      }
+    });
+  });
+});
+
+
+/*/
+/* Dynamic server status content
+/*/
+function setupServerUpdates() {
+  var serverStatuses = $('.server-status');
+
+  if(typeof serverStatuses === 'undefined' || serverStatuses === null ){
+    window.clearTimeout(serverTimeout);
+    return;
+  }
+
+  serverStatuses.each(function() {
+    var element = $(this);
+    var serverId = element.attr('data-server-id');
+
+    function updateStatus() {
+      $.get('/play/server/' + serverId, function(data) {
+        element.html(data);
+      }).then(function() {
+        serverTimeout = setTimeout(updateStatus, 5000);
+      })
+    }
+    updateStatus();
+  });
+}
+
+function updatePlayerCount() {
+  var serverCounts = $('.player-count');
+
+  if(typeof serverCounts === 'undefined' || serverCounts === null ){
+    window.clearTimeout(playerTimeout);
+    return;
+  }
+
+  $.get('/play/players', function(data) {
+    serverCounts.each(function() {
+      $(this).text(data.players);
+    });
+  }).then(function() {
+    playerTimeout = setTimeout(updatePlayerCount, 5000);
+  });
+}

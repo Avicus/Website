@@ -1,0 +1,22 @@
+#search{:style => params[:query] ? '' : 'display: none'}
+  = form_tag forums_search_path, :method => 'get', :class => 'form-inline' do
+    - unless @category.nil?
+      = hidden_field_tag :category_id, @category.id
+    - if @subs
+      = hidden_field_tag :subs, true
+    - if @disc
+      = hidden_field_tag :disc, true
+    = hidden_field_tag :tag, params[:tag]
+
+    .row-fluid
+      .span3
+        = label_tag :author, 'Author: '
+        &nbsp;
+        = text_field_tag :author, params[:author], :class => 'typeahead span8', :autocomplete => 'off'
+      .span4
+        = label_tag :query, 'Search: '
+        &nbsp;
+        = text_field_tag :query, params[:query], :class => 'span9'
+      .span2
+        = submit_tag 'Search', :class => 'btn btn-primary'
+    %br

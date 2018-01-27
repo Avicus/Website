@@ -1,0 +1,47 @@
+- content_for :title, "Punishment ##{params[:id]}"
+
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span1
+        %a{:href => @user.path}
+          %img.img-rounded{:src => @user.avatar(68), :style => 'margin-top: 5px'}
+      .span5{:style => 'margin-left: 15px'}
+        %h1
+          Punishment for
+          = link_to_user(@user)
+        %p
+          Occurred
+          = time_ago(@punishment.date)
+          ago
+      - if @punishment.can_execute?(current_user, :update)
+        .span3.pull-right
+          %br
+          = link_to 'Edit', edit_punishment_path(@punishment), :class => 'btn btn-primary pull-right'
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span12
+        %p
+          %b Type:
+          =raw @punishment.type.gsub('_',' ').titleize
+        %p
+          %b Staff:
+          = link_to_user(@staff) if @staff != nil
+          = 'Console' if @staff == nil
+        %p
+          %b Date:
+          = time_in_words(@punishment.date, true)
+        - if @punishment.expires.presence
+          %p
+            %b Expires:
+            = time_in_words(@punishment.expires, true)
+        %p
+          %b Reason:
+          = @punishment.reason
+
+        %p
+          %b Other Punishments:
+          = render 'shared/punishments', :punishments => @user.punishments.where("id != #{@punishment.id}").order('date DESC').paginate(:page => params[:page])

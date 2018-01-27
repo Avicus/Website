@@ -1,0 +1,29 @@
+%h3 Appeals
+.row-fluid
+  .span4
+    %blockquote
+      = "There #{@open == 1 ? 'is' : 'are'} currently #{@open} open #{@open == 1 ? 'appeal' : 'appeals'}"
+  .span4
+    %blockquote
+      = "There #{@escalated == 1 ? 'is' : 'are'} currently #{@escalated} escalated #{@escalated == 1 ? 'appeal' : 'appeals'}"
+
+%h4 Types of punishments appealed
+%table.table.table-bordered.table-striped
+  %tr
+    %th
+      Punishment Type
+    %th
+      Count
+    %th
+      Share
+  - @appeals_by_type.each do |type,count|
+    %tr
+      %td
+        = type.capitalize
+      %td
+        = count
+      %td
+        = (100 * count.to_d / Appeal.count).round(2).to_s + '%'
+
+%h4 Appeals against punishments made by each staff
+= bar_chart @appeals_by_staff, :height => '700px'

@@ -1,0 +1,95 @@
+= content_for :title, @user.name
+
+= render 'banner'
+
+%section.section.section-padded
+  .container-fluid
+    = render 'data'
+
+    .row-fluid
+      .span12
+        - if logged_in? && current_user != @user
+          = render 'friend_actions'
+        .tabbable
+          %ul.nav.nav-tabs
+            %li{:class => 'active'}
+              %a{:href => '#stats', 'data-toggle' => 'tab'} Stats
+            - if @about.presence
+              %li
+                %a{:href => '#about', 'data-toggle' => 'tab'} About
+            %li
+              %a{:href => '#achievements', 'data-toggle' => 'tab'} Achievements
+            %li
+              %a{:href => '#posts', 'data-toggle' => 'tab'} Recent Posts
+            %li
+              %a{:href => '#punishments', 'data-toggle' => 'tab'} Punishments
+            - if @user.details.can_view?(current_user, :reports)
+              %li
+                %a{:href => '#reports', 'data-toggle' => 'tab'} Reports
+            - if @user.details.can_view?(current_user, :appeals) && !@appeals.empty?
+              %li
+                %a{:href => '#appeals', 'data-toggle' => 'tab'} Appeals
+            - if @user.details.can_view?(current_user, :old_names) || @user.details.can_view?(current_user, :ips)
+              %li
+                %a{:href => '#admin', 'data-toggle' => 'tab'} Admin
+    .row-fluid
+      .span8
+        .tabbable
+          .tab-content{:style => 'overflow: visible'}
+            #stats.tab-pane{:class => 'active'}
+              = render 'users/tabs/stats'
+
+            #about.tab-pane
+              .row-fluid
+                .span12{:style => 'overflow: hidden'}
+                  = raw html_safe @about
+
+            #achievements.tab-pane
+              = render 'users/tabs/achievements'
+
+            #posts.tab-pane
+              .row-fluid
+                .span12
+                  .posts
+                    Loading...
+
+            :javascript
+              $(".posts").load("/users/#{@user.name.gsub(' ', '%20')}/posts");
+              $("body").on("click", ".ajax-link", function(e) {
+                e.preventDefault();
+                if ($(this).attr("rel-to") == "#") {
+                  return;
+                }
+                $(this).closest(".posts").load($(this).attr("rel-to"));
+              });
+
+            #punishments.tab-pane
+              = render 'users/tabs/punishments'
+
+            - if @user.details.can_view?(current_user, :reports)
+              #reports.tab-pane
+                = render 'users/tabs/reports'
+
+            - if @user.details.can_view?(current_user, :appeals) && !@appeals.empty?
+              #appeals.tab-pane
+                = render 'users/tabs/appeals'
+
+            - if @user.details.can_view?(current_user, :old_names) || @user.details.can_view?(current_user, :ips)
+              #admin.tab-pane
+                = render 'users/tabs/admin'
+      .span4
+        - if @recent.size > 0
+          %h2 Recent PVP Encounters
+          - @recent[0].each do |pvp|
+            %p
+              = render 'encounter', :pvp => pvp, :user => @user
+
+        - if @user.friends.count > 0
+          %hr
+          %h3
+            Friends
+            %span.label.label-info= @user.friends.count
+
+          - @user.friends.order('RAND()').limit(36).each do |user|
+            %a{:href => user.path, :style => 'text-decoration: none'}
+              %img.img-rounded{:src => user.avatar(32), :style => 'margin: 4px 2px', :rel => 'tooltip', :title => user.name}

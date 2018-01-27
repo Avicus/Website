@@ -1,0 +1,42 @@
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span9
+        %h1 Play
+        %p
+          It's free and easy to play!
+      .span3
+        .pull-right
+          %h1
+            %span.player-count
+              = @player_count
+            %span.light players
+
+%section.section.section-padded
+  .container-fluid
+    - if @servers.size == 1
+      - server = @servers.first
+      .row-fluid
+        .span12.server-status{'data-server-id' => server.id}
+          = render('server', :server => server)
+    - else
+      - @servers.each_slice(4).to_a.each do |servers|
+        .row-fluid
+          - servers.each do |server|
+            .span3.server-status{'data-server-id' => server.id}
+              = render('server', :server => server)
+
+
+#minecraft
+  .title
+    Open Minecraft and connect with:
+  .form
+    .form-label Server Address
+    .minecraft-ip{:contentEditable => 'true', :title => 'Copy & Paste into Minecraft!', 'rel-a' => ORG::MC_IP, :rel => 'tooltip-down', :spellcheck => 'false'}
+      = ORG::MC_IP
+
+:javascript
+  $(document).ready(function() {
+    setTimeout(setupServerUpdates, 5000);
+    setTimeout(updatePlayerCount, 600);
+  });

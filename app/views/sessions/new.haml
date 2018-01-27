@@ -1,0 +1,40 @@
+= content_for :title, 'Login'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span8
+        %h1
+          Login
+        %p Get access to forums and more website content!
+
+%section.section.section-padded
+  .container-fluid
+    .row-fluid
+      .span3
+        = form_tag(create_session_path, :method => 'post', :class => 'form') do
+          = hidden_field_tag(:goto, params[:to] == nil ? request.referrer : params[:to])
+          .field
+            %label Minecraft username
+            = text_field_tag :username, params[:username]
+          .field
+            %label Password
+            = password_field_tag :password, ''
+          .field
+            %label.checkbox
+              = check_box_tag :remember_me, 1, false, :style => 'margin-top: 5px'
+              Remember Me
+
+          %p
+            = submit_tag('Login', :class => 'btn btn-primary')
+
+      .span3.offset1
+        = image_tag('icons/quill.png')
+
+
+    %p
+      = link_to 'Register', registration_path
+      &nbsp; | &nbsp;
+      = link_to 'Forgot your password?', registration_path
+      &nbsp; | &nbsp;
+      = link_to 'Registration not working?', '/support#contact'

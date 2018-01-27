@@ -1,0 +1,27 @@
+= content_for :title, '500 - An error was encountered during the request.'
+
+.banner{style: 'height: 220px'}
+  %img{src: '/assets/defense.png'}
+  .overlay
+    .row
+      %h1.pull-right{style: 'font-size: 80px;'}
+        500
+        %br
+        %small{style: 'font-size: 20px'} An error was encountered during the request.
+    .row
+      %h3.pull-right
+        Exception ID:
+        %small{style: 'font-size: 20px'}= @id
+
+- can_see_stacks = current_user.nil? ? false : current_user.has_permission?(:application_controllers, :view, :full_stacks, true)
+- if Rails.env == 'development' || can_see_stacks
+  %br
+  .container-fluid
+    %h2= @exception.message
+    %h3 Params:
+    %code= params
+    %hr
+    - @exception.backtrace.each do |t|
+      %code= t
+      %br
+  %br

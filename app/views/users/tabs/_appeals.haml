@@ -1,0 +1,24 @@
+%h3
+  Appeals by
+  = link_to_user(@user)
+.table-responsive
+  %table.table.table-bordered.table-striped.no-margin
+    %thead
+      %tr
+        %th{:style => 'width: 10%'} Punishment ID
+        %th{:style => 'width: 20%'} Last action by
+        %th{:style => 'width: 33%'} Status
+        %th{:style => 'width: 7%'}
+    %tbody
+      - @appeals.each do |appeal|
+        - next unless appeal.can_execute?(current_user, :view)
+        - next if appeal.actions.first.nil?
+        %tr
+          %td
+            = link_to appeal.punishment.id, punishment_path(appeal.punishment)
+          %td
+            = link_avatar_to_user(appeal.actions.last.user, 16, :class => 'img-rounded') + ' ' + link_to_user(appeal.actions.last.user)
+          %td
+            = appeal.status
+          %td
+            = link_to 'View Appeal', appeal_path(appeal), :class => 'btn btn-mini btn-success'

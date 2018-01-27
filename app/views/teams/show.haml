@@ -1,0 +1,163 @@
+= content_for :title, @team.title
+
+
+%section.section-dark.main-header
+  .container-fluid{:style => ''}
+    .row-fluid
+      / .span1{:style => "width: 80px"}
+      /   = image_tag @team.emblem, :style => "height: 80px; width: 80px; box-shadow: 2px 2px 2px #000; border: 1px solid black"
+      .span4
+        %h1= @team.title
+        %p
+          %span{:style => 'color: rgb(221, 221, 0)'}
+            = '[' + @team.tag + ']'
+          = @team.tagline
+          - if current_user.has_permission?(:teams, :global, :view_reservation_count, true)
+            %p
+              = "(This team has made #{@team.reservations} scrimmage server #{(@team.reservations == 1 ? 'reservation' : 'reservations')})"
+      - unless @team.global?
+        .span5.pull-right
+          %br
+          %div.pull-right
+            .btn-group
+              %a.btn.btn-info{:href => '/teams'} Teams
+              - if @team.can_execute?(current_user, :actions, :update)
+                = link_to 'Edit', edit_team_path(@team), :class => 'btn btn-primary'
+              - if logged_in? && @team.members.where(:user_id => current_user.id).size > 0
+                = link_to 'Leave', "#{@team.path}/leave", :class => 'btn btn-warning', :confirm => 'Are you sure you want to leave your team?'
+              - if @team.can_execute?(current_user, :actions, :delete)
+                = link_to 'Disband', @team, method: :delete, data: { confirm: 'Are you sure you want to disband your team?' }, :class => 'btn btn-danger'
+              - if logged_in? && @team.is_invited(current_user)
+                = link_to 'Accept Invite', "#{@team.path}/set_accepted", :class => 'btn btn-success'
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span12
+        - if @team.can_execute?(current_user, :actions, :invite) && !@team.global?
+          %form.pull-right{:action => "/teams/#{@team.id}/invite", :style => 'margin: 0; margin-top: -10px'}
+            .row-fluid
+              .input-append
+                %input.typeahead{:name => 'query', :placeholder => 'Invite User', :autocomplete => 'off', :style => 'width: 130px', :type => 'text'}
+                %input.btn{:type => 'submit', :value => '»'}
+        .tabbable
+          %ul.nav.nav-tabs
+            %li.active
+              %a{'data-toggle' => 'tab', :href => '#aboutTab'} About
+            - unless @team.global?
+              %li
+                %a{'data-toggle' => 'tab', :href => '#membersTab'}
+                  Members
+                  = '(' + @team.members.size.to_s + ')'
+                %li
+                  %a{'data-toggle' => 'tab', :href => '#statsTab'} Team Statistics
+              - if @team.can_execute?(current_user, :actions, :invite) ||  @team.can_execute?(current_user, :actions, :kick)
+                %li
+                  %a{'data-toggle' => 'tab', :href => '#inviteTab'}
+                    Invites
+                    = '(' + @team.invites.size.to_s + ')'
+          .tab-content
+            #aboutTab.tab-pane.active
+              .span12{:style => 'overflow: hidden'}
+                = raw html_safe @team.about
+            - unless @team.global?
+              #membersTab.tab-pane
+                %table.table.table-bordered.table-striped
+                  %tr
+                    %th Username
+                    %th Role
+                    %th Accepted At
+                  - @team.members.each do |member|
+                    %tr
+                      %td
+                        %a{:href => member.user.path}
+                          %img.round-mini{:src => member.user.avatar(40), :style => 'width: 20px'}
+                        &nbsp;
+                        = link_to_user(member.user)
+                      %td
+                        - if @team.can_execute?(current_user, :actions, :set_role)
+                          %form{:action => "/teams/#{@team.id}/set_role", :method => 'get'}
+                            = hidden_field_tag :member_id, member.id
+                            .span6
+                              = select_tag 'role', options_for_select(%w(Leader Member), member.role.capitalize), {:class => 'auto-submit'}
+
+                        - else
+                          = member.role.capitalize
+                      %td
+                        = time_ago member.accepted_at
+                        ago
+                        - if  @team.can_execute?(current_user, :actions, :kick)
+                          %a.btn-mini.btn.btn-danger.pull-right{:rel => 'tooltip', :title => "Kick #{member.user.name} from team", :href => "/teams/#{@team.id}/kick?member_id=#{member.id}"}
+                            %i.fa.fa-times
+
+              #statsTab.tab-pane
+                .span12
+                  .row-fluid
+                    .span6
+                      %blockquote
+                        %h2
+                          %small a total of
+                          = seconds_to_time @online
+                          %small spent online
+                    .span4
+                      %blockquote
+                        %h2
+                          = @objectives
+                          %small completed objectives
+
+
+                  .row-fluid
+                    .span3
+                      %blockquote
+                        %h2
+                          = number_with_delimiter @kills
+                          %small kills
+                    .span3
+                      %blockquote
+                        %h2
+                          = number_with_delimiter @deaths
+                          %small deaths
+
+                    .span3
+                      %blockquote
+                        %h2
+                          = @kd.round(5)
+                          %small KD Ratio
+
+              - if @team.can_execute?(current_user, :actions, :invite) || @team.can_execute?(current_user, :actions, :update)
+                #inviteTab.tab-pane
+                  %table.table.table-bordered.table-striped
+                    %tr
+                      %th Username
+                      %th Team
+                      %th Invited At
+                    - @team.invites.each do |member|
+                      %tr
+                        %td
+                          = link_to_user(member.user)
+                        %td
+                          - if member.user.team == nil
+                            None
+                          - else
+                            =raw member.user.team.link
+                        %td
+                          = time_ago member.created_at
+                          ago
+                          - if @team.can_execute?(current_user, :actions, :kick)
+                            %a.btn-mini.btn.btn-danger.pull-right{:rel => 'tooltip', :title => "Cancel #{member.user.name}'s invite", :href => "/teams/#{@team.id}/cancel_invite?member_id=#{member.id}"}
+                              %i.fa.fa-times
+                  - if @team.invites.size == 0
+                    %p.text-center There are no pending invites.
+
+:css
+  td {
+    vertical-align:middle !important;
+  }
+  tr.no-padding td {
+  }
+
+  .tooltip.in {
+    opacity: 1.0;
+  }
+  #bg {
+   background-position: 0px 50% !important;
+  }

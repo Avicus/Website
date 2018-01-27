@@ -1,0 +1,32 @@
+= content_for :title, 'Achievements Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Achievement Management
+      .pull-right
+        = link_to 'Back', admin_achievements_path, :class => 'btn btn-info'
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      - if @achievement.can_execute?(current_user, :reward)
+        .span6
+          %h3 Reward
+          = form_tag admin_achievement_reward_path(@achievement) do
+            = text_field_tag 'user', nil, :class => 'typeahead', :autocomplete => 'off'
+            %br
+            = submit_tag 'Reward User', :class => 'btn btn-primary'
+      .span4
+        %h3
+          Users With Achievement
+        - AchievementReceiver.where(achievement: @achievement).each do |m|
+          - unless !@achievement.can_execute?(current_user, :revoke)
+            %a{:href => admin_achievement_revoke_path(@achievement) + "?user=#{m.user_id}", :method => :delete}
+              %i.fa.fa-times
+          = m.user.name
+%hr
+  .container-fluid
+    = render 'form'
+
+%br

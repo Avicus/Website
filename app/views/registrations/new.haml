@@ -1,0 +1,34 @@
+= content_for :title, 'Tournament Registration'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1 Tournament Registration
+
+
+%section.section-padded.section-last
+  .container-fluid
+    %p
+      %b Tournament:
+      = link_to @tournament.name, @tournament
+    %p
+      %b Team:
+      = raw current_user.team.link
+
+    %p
+      %b Notice:
+      Registering does not guarantee participation in the tournament. Teams will be selected on a basis determined by the tournament rules. Be sure to check the 
+      = link_to 'tournament page', @tournament
+      to ensure your team meets the requirements.
+
+    %p
+      %b Agreement:
+      By registering for this tournament, you are agreeing to the ruleset of this particular tournament and the 
+      = ORG::NAME 
+      rules. You acknowledge that your team will be held accountable altogether if any member of your team disobeys any rule. Disobeying the rules may lead to user punishment, disqualification, or a temporary or permanent ban from all tournaments based on the discretion of event committee members and the 
+      = ORG::NAME 
+      administration.
+
+    = form_for([@tournament, @registration]) do |f|
+      = f.submit 'Register', :class => 'btn btn-success'

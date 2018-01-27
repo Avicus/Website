@@ -1,0 +1,104 @@
+!!! 5
+%html{:lang => 'en', :prefix => 'og: http://ogp.me/ns#'}
+  %head
+    %meta{:charset => 'utf-8'}
+    %meta{:content => 'IE=edge,chrome=1', 'http-equiv' => 'X-UA-Compatible'}
+    %link{:href => '/favicon.ico', :rel => 'shortcut icon'}
+    %title
+      = content_for?(:title) ? truncate(yield(:title), :length => 35) : params[:controller].capitalize
+      »
+      = ORG::NAME
+
+    %meta{:property => 'og:title', :content => content_for?(:title) ? yield(:title) : params[:controller].capitalize}
+    %meta{:property => 'og:type', :content => 'website'}
+    %meta{:property => 'og:url', :content => request.original_url}
+    %meta{:property => 'og:description', :content => content_for?(:desc) ? yield(:desc) : "A rails site"}
+    %meta{:name => 'description', :content => content_for?(:desc) ? yield(:desc) : "A rails site"}
+    %meta{:name => 'viewport', :content => 'width=device-width, initial-scale=1.0'}
+    %meta{:name => 'theme-color', :content => '#373737'}
+
+    = javascript_include_tag '//code.highcharts.com/highcharts.js'
+    = javascript_include_tag 'application'
+    = stylesheet_link_tag    'application'
+
+    = csrf_meta_tags
+  %body{'data-spy' => params[:action] == 'rules' ? 'scroll' : ''}
+    .wrapper
+      / Page Header
+      %header#masthead
+        = render 'peek/bar'
+        = render 'layouts/navigation_bar'
+
+      / Main Content
+      #content{:role => 'main'}
+        - if flash[:notice]
+          .alert.alert-success{:style => 'margin: 0'}
+            = raw html_safe flash[:notice]
+        - if flash[:alert]
+          .alert.alert-warning{:style => 'margin: 0'}
+            = raw html_safe flash[:alert]
+        - if flash[:error]
+          .alert.alert-danger{:style => 'margin: 0'}
+            = raw html_safe flash[:error]
+
+        - if params[:action] != 'home'
+          - if @announcement
+            #announcement.alert.alert-success.no-margin
+              %center
+                = raw @announcement.body
+
+          - if @banned
+            #appealalert.alert.alert-danger.no-margin
+              %center
+                You are currently banned from our servers.
+                %br
+                = link_to('Start an appeal', '/appeal', :class => 'btn btn-danger btn-mini')
+
+        = yield
+
+    / Page Footer
+
+    %footer#footer.theme-dark{:role => 'contentinfo'}
+      .wrapper.wrapper-transparent
+        .container-fluid
+          .row-fluid
+            .span5.small-screen-center
+              %h3
+                %span.light
+                  = ORG::NAME
+            .span7
+              %ul.unstyled.inline.text-right.small-screen-center.big.social-icons
+                %li
+                  %a{:title => 'Youtube', 'data-iconcolor' => '#E60000'}
+                    %i.fa.fa-youtube
+                %li
+                  %a{:title => 'Twitter', 'data-iconcolor' => '#00a0d1'}
+                    %i.fa.fa-twitter
+                %li
+                  %a{:title => 'Facebook', 'data-iconcolor' => '#00a0d1'}
+                    %i.fa.fa-facebook
+                %li
+                  %a{:title => 'Instagram', 'data-iconcolor' => '#00a0d1'}
+                    %i.fa.fa-instagram
+              %ul.unstyled.inline.text-right.small-screen-center
+                %li
+                  %a{'data-iconcolor' => '#DADADA', :href => '/appeal'}
+                    Submit an Appeal
+                %li
+                  %a{'data-iconcolor' => '#DADADA', :href => '/development'}
+                    Development
+                %li
+                  %a{'data-iconcolor' => '#DADADA', :href => '/support'}
+                    Support
+                %li
+                  %a{'data-iconcolor' => '#DADADA'}
+                    Rules
+                %li
+                  %a{'data-iconcolor' => '#DADADA'}
+                    Terms of Use
+                %li
+                  %a{'data-iconcolor' => '#DADADA', :href => '/punishments'}
+                    Punishments
+                %li
+                  %a{'data-iconcolor' => '#DADADA', :href => '/staff'}
+                    Staff

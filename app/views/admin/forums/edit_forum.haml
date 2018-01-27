@@ -1,0 +1,20 @@
+= content_for :title, 'Forums - Editing' + @forum.name
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Editing
+      = @forum.name
+      .pull-right
+        = link_to 'Delete', admin_forums_destroy_path, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-danger'
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      = form_for @forum, :url => admin_forums_update_path, :html => {:multipart => true, :method => :post} do |f|
+        %p Name
+        = f.text_field :name, :disabled => @editable.include?(:name) ? nil : ''
+        %p Priority
+        = f.text_field :priority, :style => 'width: 57px;', :disabled => @editable.include?(:priority) ? nil : ''
+        %br
+        = f.submit 'Update Forum', :class => 'btn btn-primary'

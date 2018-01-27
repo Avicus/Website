@@ -1,0 +1,129 @@
+- content_for :title, 'Player Experience Stats'
+
+- if @current.nil?
+  %section.section-dark.main-header
+    .container-fluid
+      .row-fluid
+        .span12.text-center
+          %h1 No Season Currently in Progress
+          %h2
+            Check back later.
+- else
+  %section.section-dark.main-header
+    .container-fluid
+      .row-fluid
+        .span12.text-center
+          %h1 Player Experience Stats
+          %h2
+            The
+            = @current.name
+            season, which has been going on for
+            = "#{time_ago(@current.start_at)},"
+            will end in
+            = time_ago(@current.end_at)
+      .row-fluid
+        .span12
+          = form_tag(params, :method => :get) do
+            .row-fluid.pull-right
+              .span4
+                %b Period:
+                = select_tag(:period, options_for_period(params[:period]), :onchange => 'this.form.submit()')
+              .span3
+                %b Sorted by:
+                = select_tag(:sort, options_for_xp_sort(params[:sort]), :onchange => 'this.form.submit()')
+              .span5
+                %p
+                  %b Username:
+                .input-append
+                  = text_field_tag :query, params[:query], :class => 'typeahead', :autocomplete => 'off'
+                  %input.btn.btn-info{:type => 'submit', :value => 'Search'}
+
+
+- unless @current.nil?
+  %section
+    .container-fluid
+      .row-fluid
+        .span12
+          - if @user
+            = render('xp_summary', :user => @user)
+
+          .page-header
+            %h3
+              Leaderboard
+
+          - if @entries.empty?
+            %p
+              Query did not match any stats.
+          - else
+            .table-responsive
+              %table.table.table-bordered.table-striped
+                %thead
+                  %tr
+                    %th Rank
+                    %th Player
+                    %th % of MAX
+                    %th Prestige
+                    %th Total XP
+                    %th Nebula XP
+                    %th KOTH XP
+                    %th CTF XP
+                    %th TDM XP
+                    %th Elimination XP
+                    %th SkyWars XP
+                    %th Walls XP
+                    %th Arcade XP
+                %tbody
+                  - @entries.each do |entry|
+                    - # shouldn't happen
+                    - if entry.user == nil
+                      - next
+
+                    %tr{:class => (@user and @user.id == entry.user_id) ? 'warning' : ''}
+                      %td
+                        %h3{class: 'no-margin no-padding', style: 'text-align: right; font-weight: 300; font-size: 40px'}
+                          = get_ranking(@entries, entry)
+                      %td
+                        .span3{style: 'width: 37px'}
+                          %img.round-mini{:src => entry.user.avatar(45)}
+                        .span9{style: 'margin-left: 8px; margin-top: -7px'}
+                          = link_to_user(entry.user)
+                          %hr{style: 'margin: 0'}
+                          - last = Session.where(:user_id => entry.user.id).order('created_at DESC').limit(1).first
+                          - unless last.nil?
+                            %small
+                              - if last.is_active?
+                                %i{style: 'color: green'}
+                                  Online:
+                                  = last.server.name
+                              - else
+                                %i{style: 'color: red'}
+                                  Last seen
+                                  = time_ago(last.updated_at)
+                                  ago
+                      %td
+                        = (entry.level / 10.0).round(2)
+                      %td
+                        - if entry.prestige_level > 15
+                          %label.label.label-info MAX
+                        - else
+                          = number_with_delimiter(entry.prestige_level)
+                      %td
+                        = number_with_delimiter(entry.xp_total)
+                      %td
+                        = number_with_delimiter(entry.xp_nebula)
+                      %td
+                        = number_with_delimiter(entry.xp_koth)
+                      %td
+                        = number_with_delimiter(entry.xp_ctf)
+                      %td
+                        = number_with_delimiter(entry.xp_tdm)
+                      %td
+                        = number_with_delimiter(entry.xp_elimination)
+                      %td
+                        = number_with_delimiter(entry.xp_sw)
+                      %td
+                        = number_with_delimiter(entry.xp_walls)
+                      %td
+                        = number_with_delimiter(entry.xp_arcade)
+            = will_paginate(@entries)
+        %br/

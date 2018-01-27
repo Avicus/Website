@@ -1,0 +1,13 @@
+%h3 Achievements
+- @achievements.each_slice(2).each do |set|
+  .row-fluid
+    - set.each do |ac|
+      .span6
+        .badge{:rel => 'tooltip', :title => ac.description, style: 'width: 80%;background-color:#' + '%06x' % (rand * 0xffffff)}
+          .row-fluid
+            .span2
+              %strong{style: 'font-size: 30px'} ✓
+            .span10.text-center{style: 'padding-top: 2px'}
+              %strong= ac.name
+        %br
+        %br

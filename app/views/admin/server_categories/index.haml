@@ -1,0 +1,23 @@
+= content_for :title, 'Server Categories Management'
+
+= render 'admin/heads/index', subject: 'Server Category'
+
+
+%section.section-padded
+  .container-fluid
+    .table-responsive
+      %table.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th Name
+            %th Server count
+            %th
+        %tbody
+          - @server_categories.each do |category|
+            %tr
+              %td
+                = link_to category.name, [:admin, category]
+              %td
+                = category.servers.size
+              %td
+                = link_to 'Destroy', [:admin, category], method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger'

@@ -1,0 +1,43 @@
+= form_tag appeal_path(@appeal) do |f|
+  %input{:name => '_method', :type => 'hidden', :value => 'put'}/
+  .row-fluid
+    .span2
+      %h3 Action
+      .btn-group-vertical{'data-toggle' => 'buttons-radio', style: 'width: 100%'}
+        / Comment
+        - if @appeal.can_execute?(current_user, :comment)
+          %button.btn.btn-primary.active{:style => 'width: 100%', :type => 'button'} Comment
+
+        - if @appeal.can_execute?(current_user, :staff_note)
+          %button.btn.btn-warning{:style => 'width: 100%', :type => 'button'} Staff Note
+
+        / Appeal/Unappeal
+        - if @appeal.punishment.appealed? && @appeal.can_execute?(current_user, :unappeal)
+          %button.btn.btn-danger{:style => 'width: 100%', :type => 'button'} Unappeal
+        - elsif @appeal.can_execute?(current_user, :appeal)
+          %button.btn.btn-success{:style => 'width: 100%', :type => 'button'} Appeal
+
+        / Open/Close
+        - if @appeal.open? && @appeal.can_execute?(current_user, :close)
+          %button.btn.btn-danger{:style => 'width: 100%', :type => 'button'} Close
+        - elsif @appeal.can_execute?(current_user, :open)
+          %button.btn.btn-success{:style => 'width: 100%', :type => 'button'} Open
+
+        / Lock/Unlock
+        - if @appeal.locked? && @appeal.can_execute?(current_user, :unlock)
+          %button.btn.btn-success{:style => 'width: 100%', :type => 'button'} Unlock
+        - elsif @appeal.can_execute?(current_user, :lock)
+          %button.btn.btn-danger{:style => 'width: 100%', :type => 'button'} Lock
+
+        / Escalate
+        - if @appeal.can_execute?(current_user, :escalate) && !@appeal.escalated
+          %button.btn.btn-warning{:style => 'width: 100%', :type => 'button'} Escalate
+        - elsif @appeal.can_execute?(current_user, :de_escalate) && @appeal.escalated
+          %button.btn.btn-success{:style => 'width: 100%', :type => 'button'} De Escalate
+
+      = hidden_field_tag('action_val', 'comment')
+    .span10
+      %h3 Text
+      = text_area_tag(:text, '', :style => 'width: 99%; height: 80px')
+      %br/
+      = submit_tag('Perform Action', :class => 'btn btn-primary', :id => 'action-btn')

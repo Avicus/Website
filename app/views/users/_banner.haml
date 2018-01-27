@@ -1,0 +1,22 @@
+%section.section.section-alt.section-dark
+  .cover-art{:style => "background: url(#{@cover_art})"}
+    .user
+      .center
+        .avatar{:style => 'width: 100px'}
+          %img.img-rounded{:src => @user.avatar(100)}
+        .info
+          %h1
+            = @user.name
+          #status
+            .offline
+            %span
+              Loading Status
+
+          - ranks = @user.ranks.sort_by {|rank| rank.priority}.reverse.uniq
+          - ranks.each do |rank|
+            - if rank.has_badge?
+              %span.label{:style => "background-color: #{rank.badge_color}; color: #{rank.badge_text_color};"}
+                = rank.name
+
+          :javascript
+            $("#status").load("/users/#{@user.name.gsub(' ', '%20')}/status");

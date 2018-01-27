@@ -1,0 +1,20 @@
+- if @ratings.inject(0){|sum,x| sum + x } == 0
+  .alert.alert-warning This version does not have any ratings.
+- else
+  .row-fluid
+    .span6
+      %h2
+        %i.fa.fa-star{style: 'color: red', :rel => 'rating', :title => @ratings[0].to_s + ' Ratings'}
+        %i.fa.fa-star{style: 'color: orange', :rel => 'rating', :title => @ratings[1].to_s + ' Ratings'}
+        %i.fa.fa-star{style: 'color: #ffea00', :rel => 'rating', :title => @ratings[2].to_s + ' Ratings'}
+        %i.fa.fa-star{style: 'color: lime', :rel => 'rating', :title => @ratings[3].to_s + ' Ratings'}
+        %i.fa.fa-star{style: 'color: green', :rel => 'rating', :title => @ratings[4].to_s + ' Ratings'}
+    .span6
+      %h3{style: 'padding-top: 13px'}
+        = @average
+        %small Average Rating
+
+:javascript
+  $('[rel=rating]').tooltip({
+      placement: 'top'
+  });

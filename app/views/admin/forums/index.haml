@@ -1,0 +1,38 @@
+= content_for :title, 'Forums Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Forums Management
+
+%section.section-padded
+  .container-fluid
+    %h1 New
+    .row-fluid
+      .span5
+        %h2 New Forum
+        = form_tag(admin_forums_create_path, {:method => 'posts', :class => 'form-inline', :style => 'padding-top: 10px'}) do
+          &nbsp;
+          = text_field_tag 'forum[name]'
+          = submit_tag 'New Forum', :class => 'btn btn-success'
+      .span7
+        %h2 New Category
+        = form_tag(admin_categories_create_path, {:method => 'posts', :class => 'form-inline', :style => 'padding-top: 10px'}) do
+          &nbsp;
+          = text_field_tag 'category[name]'
+          %select{name: 'category[forum_id]', style: 'width: 122px'}
+            - @forums.each do |f|
+              %option{:value => f.id}=f.name
+          = submit_tag 'New Category', :class => 'btn btn-success'
+    %br
+    %h1 Existing
+    .row-fluid
+      - @forums.each_slice(2) do |sl|
+        .span3
+          - sl.each do |f|
+            %h2
+              %a{:href => admin_forums_edit_path(f)}= f.name
+            - f.categories.order('priority DESC').each do |c|
+              %a{:href => admin_categories_edit_path(c)}= c.name
+              %br
+            %br

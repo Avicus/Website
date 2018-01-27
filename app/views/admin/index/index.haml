@@ -1,0 +1,30 @@
+- content_for :title, 'Admin Home'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1
+          Administration Panel
+
+%br
+%section
+  .container-fluid
+    %h1 Panels
+    - @panels.each_slice(3) do |slice|
+      .row-fluid
+        - slice.each do |p|
+          .span4
+            %a{:href => '/admin/' + p[:name].downcase.gsub(' ', '_')}
+              %span.title
+                %strong= p[:name]
+            %br
+            %italic= p[:desc]
+            %hr
+    .alert#alert-info
+      %strong{style: 'font-size: 22px;'} NOTICE:
+      %p
+        Anything that is changed in this panel will be updated live across the network.
+        Please make all changes with this in mind. Be aware that actions in this panel are
+        %strong logged.
+%br

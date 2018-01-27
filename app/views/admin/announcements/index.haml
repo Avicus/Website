@@ -1,0 +1,44 @@
+= content_for :title, 'Announcement Management'
+
+= render 'admin/heads/index', subject: 'Announcement'
+
+%section.section-padded
+  .container-fluid
+    %table.table.table-striped.table-bordered
+      %thead
+        %tr
+          %th Body
+          %th Enabled
+          %th Motd
+          %th Motd format
+          %th Game Popup
+          %th Lobby
+          %th Tips
+          %th Web
+          %th Permission
+          %th
+      %tbody
+        - @announcements.each do |announcement|
+          %tr
+            %td
+              = raw announcement.body.gsub(' ', '&nbsp;')
+            %td
+              = boolean_to_symbol(announcement.enabled, true)
+            %td
+              = boolean_to_symbol(announcement.motd, true)
+            %td
+              = boolean_to_symbol(announcement.motd_format, true)
+            %td
+              = boolean_to_symbol(announcement.popup, true)
+            %td
+              = boolean_to_symbol(announcement.lobby, true)
+            %td
+              = boolean_to_symbol(announcement.tips, true)
+            %td
+              = boolean_to_symbol(announcement.web, true)
+            %td
+              = announcement.permission
+            %td
+              = link_to 'Edit', edit_admin_announcement_path(announcement), :class => 'btn btn-mini btn-info'
+              = link_to 'Copy', admin_announcement_copy_path(announcement), :class => 'btn btn-mini btn-primary'
+              = link_to 'Delete', [:admin, announcement], method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger'

@@ -1,0 +1,21 @@
+%table.table.table-bordered.table-striped
+  %tr
+    %th
+      Appeal Status
+    %th
+      Count
+    %th
+      Share
+  - @appeals_by_status.each do |state,count|
+    %tr
+      %td
+        = state.capitalize
+      %td
+        = count
+      %td
+        = (100 * count.to_d / Appeal.count).round(2).to_s + '%'
+
+%h4 Appeals denied by staff
+= bar_chart @appeals_denied_by_staff, :height => '700px'
+%h4 Appeals accepted by staff
+= bar_chart @appeals_accepted_by_staff, :height => '700px'

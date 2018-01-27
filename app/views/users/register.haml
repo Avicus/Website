@@ -1,0 +1,45 @@
+= content_for :title, 'Register'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1 Register
+        %p Here you can register and create an account. If you have an account, but have forgotten your password, simply go through registration again.
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      - if @verify_key
+        %h1 Registration in progress
+        %p
+          Open Minecraft and connect to
+          %code= @verify_key + '.register.' + ORG::MC_IP
+          to complete the verification process.
+          %strong DO NOT CLOSE THIS PAGE
+        %p
+          You will be redirected when the verification process completes.
+        :javascript
+          setInterval(function() {
+            var status = $.getJSON("/users/register/#{@user.id}/", function(data) {
+              if (data["success"] == true) {
+                window.location = "/users/registered/#{@user.id}?reg_verify=#{@reg_verify}";
+              }
+            });
+          }, 1000);
+      - elsif @temp_pass
+        %h1 Registration successful!
+        %p
+          You can now log in using the password
+          %code= @temp_pass
+
+      - else
+        %h1 Begin registration
+        = form_tag '/users/register' do
+          %p
+            In order to register, you must have a valid Minecraft account.
+          .field
+            = label_tag :username, 'Minecraft Username'
+            = text_field_tag :username, params[:username], :class => 'typeahead', :autocomplete => 'off'
+          %br
+          = submit_tag 'Begin Registration', :class => 'btn btn-primary'

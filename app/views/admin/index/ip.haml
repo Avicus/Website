@@ -1,0 +1,123 @@
+- content_for :title, "#{@session.obscured_ip} Info"
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span8
+        %h1
+          = @session.obscured_ip
+          Info
+          - if !@ip_ban.nil? && @ip_ban.enabled
+            %small IP Ban Active
+        %p
+          = link_to 'Back', request.referer
+      .span4
+        - if Punishment.can_mass_punish?(current_user)
+          %p
+            %a.btn.btn-warning.pull-right.open-punish{:style => 'margin-top: 10px; margin-left: 10px'}
+              Mass Punish
+              &nbsp;
+              %i.fa.fa-caret-down
+        - if IpBan.can_execute?(current_user, :update) || IpBan.can_execute?(current_user, :create)
+          %p
+            %a.btn.btn-danger.pull-right.open-ip{:style => 'margin-top: 10px'}
+              IP Ban
+              &nbsp;
+              %i.fa.fa-caret-down
+:javascript
+  $(".open-punish").click(function () {
+    $("#punish").slideToggle(200);
+  })
+  $(".open-ip").click(function () {
+    $("#ip").slideToggle(200);
+    ($("#punishment_is_ip").val() == "false") ? $("#punishment_is_ip").val("true") : $("#punishment_is_ip").val("false");
+  })
+  jQuery('#datepicker').datetimepicker({
+      format: 'm/d/Y H:i',
+  });
+
+= form_tag admin_punish_path, :method => 'post', :class => 'form-inline' do
+
+  %section.section-padded
+    - if Punishment.can_mass_punish?(current_user)
+      .container-fluid
+        #punish{style: 'display: none'}
+          .row-fluid
+            .span4
+              Staff:
+              = text_field_tag 'punishment[staff]', nil, :class => 'typeahead', :autocomplete => 'off', style: 'width:100%'
+            .span4
+              Type:
+              = select_tag 'punishment[type]', options_for_select(@punish_types), style: 'width: 100%'
+            .span4
+              Expires:
+              = text_field_tag 'punishment[expires]', nil, id: 'datepicker', style: 'width: 100%'
+          .row-fluid
+            .span12
+              Reason:
+              = text_field_tag 'punishment[reason]', nil, style: 'width: 100%'
+
+          %br
+            = submit_tag 'Punish', :class => 'btn btn-primary'
+
+          %br
+          %br
+    - if IpBan.can_execute?(current_user, :update) || IpBan.can_execute?(current_user, :create)
+      .container-fluid
+        #ip{style: 'display: none'}
+          = hidden_field_tag 'punishment[is_ip]', 'false'
+          = hidden_field_tag 'ip_ban[ip]', @session.ip
+          .row-fluid
+            .span4
+              Staff:
+              = text_field_tag 'ip_ban[staff]', @ip_ban.nil? ? nil : @ip_ban.staff, :class => 'typeahead', :autocomplete => 'off', style: 'width:100%'
+          .row-fluid
+            .span4
+              Enabled:
+              - if !@ip_ban.nil? && @ip_ban.enabled
+                = check_box_tag 'ip_ban[enabled]', true, {:checked => true}
+              - else
+                = check_box_tag 'ip_ban[enabled]'
+          .row-fluid
+            .span12
+              Reason:
+              = text_field_tag 'ip_ban[reason]', @ip_ban.nil? ? nil : @ip_ban.reason, style: 'width: 100%'
+
+          %br
+            = submit_tag 'IP Ban', :class => 'btn btn-primary'
+
+          %br
+          %br
+    .row-fluid
+      .span12
+        %table.table.table-bordered.table-striped.no-margin
+          %tr
+            - if Punishment.can_mass_punish?(current_user)
+              %th
+                Mass Punish
+            - if IpBan.can_execute?(current_user, :update) || IpBan.can_execute?(current_user, :create)
+              %th
+                Exclude
+            %th
+              User
+            %th
+              Logins
+            %th
+              Last Login
+          - @sessions.each do |user,info|
+            %tr{class: "#{info[:banned] ? 'warning' : nil}"}
+              - if Punishment.can_mass_punish?(current_user)
+                %td{style: 'width: 100px'}
+                  = check_box_tag "punish[#{user.id}]"
+              - if IpBan.can_execute?(current_user, :update) || IpBan.can_execute?(current_user, :create)
+                %td{style: 'width: 100px'}
+                  - if !@ip_ban.nil? && @ip_ban.excluded_users.include?(user.id.to_s)
+                    = check_box_tag "exclude[#{user.id}]", true, {checked: true}
+                  - else
+                    = check_box_tag "exclude[#{user.id}]"
+              %td
+                = link_to_user(user)
+              %td
+                = info[:count]
+              %td
+                = time_ago info[:last]

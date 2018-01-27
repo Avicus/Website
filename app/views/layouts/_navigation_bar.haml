@@ -1,0 +1,115 @@
+%nav.navbar.navbar-static-top
+  .navbar-inner
+    .container-fluid
+      %a.btn.btn-navbar.collapsed{'data-target' => '.nav-collapse', 'data-toggle' => 'collapse'}
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      %h1.brand
+        %a{:href => '/'}
+          %img{:src => "/assets/logo.png", :alt => 'Logo', :style => 'height: 35px; padding-bottom: 5px'}
+          %span.light{:style => 'margin-top: 9px'} 
+            = ORG::NAME
+
+      .nav-collapse.collapse
+        %ul.nav.pull-right
+
+          %li.dropdown{:class => "#{'active' if params[:controller] == 'play'}"}
+            %a{:href => '/play'}
+              %i.fa.fa-play-circle
+              Play
+
+          %li.dropdown{:class => "#{'active' if params[:controller] == 'stats'}"}
+            %a.dropdown-toggle{'data-toggle' => 'dropdown', :href => '#'}
+              %i.fa.fa-bar-chart
+              Statistics
+              %i.caret{:style => 'margin-top: 11px'}
+            %ul.dropdown-menu
+              %li
+              %li
+                %a{:href => '/stats'}
+                  %i.fa.fa-bar-chart
+                  General Leaderboards
+                %a{:href => '/experience'}
+                  %i.fa.fa-asterisk
+                  Experience Leaderboards
+
+          %li.dropdown{:class => "#{'active' if params[:controller] == 'slots' || params[:controller] == 'teams' || params[:controller] == 'tournaments'}"}
+            %a.dropdown-toggle{'data-toggle' => 'dropdown', :href => '#'}
+              %i.fa.fa-trophy
+              Competitive
+              %i.caret{:style => 'margin-top: 11px'}
+            %ul.dropdown-menu
+              %li
+              %li
+                %a{:href => '/tournaments'}
+                  %i.fa.fa-sitemap
+                  Tournaments
+                %a{:href => '/teams'}
+                  %i.fa.fa-group
+                  Teams
+                %a{:href => '/scrims'}
+                  %i.fa.fa-flag
+                  Scrimmages
+                %a{:href => '/live', :style => (get_cache('twitch.online') ? 'color: rgb(189, 0, 0)' : nil)}
+                  %i.fa.fa-play
+                  Live
+
+          %li{:class => "#{'active' if params[:controller] == 'discussions'}"}
+            %a{:href => '/forums'}
+              %i.fa.fa-comments-o
+              Forums
+
+          %li{:class => "#{'active' if params[:controller] == 'maps'}"}
+            %a{:href => '/maps'}
+              %i.fa.fa-globe
+              Maps
+
+          - if current_user.has_permission?('admin:index_controllers', :view, :index, true)
+            %li{:class => "#{'active' if controller.class.name.split('::').first=='Admin'}"}
+              %a{:href => '/admin'}
+                %i.fa.fa-wrench
+                Administration
+
+          - if get_cache 'twitch.online'
+            %li{:class => "#{'active' if params[:controller] == 'livestream'}"}
+              %a{:href => '/live', :rel => 'tooltip-right', :title => 'A user is live!'}
+                %i.fa.fa-play{:style => 'color: rgb(189, 0, 0)'}
+
+          - if logged_in?
+            - if current_user.unread_alerts.size > 0
+              %li{:class => "#{'active' if params[:controller] == 'alerts'}"}
+                %a{:href => '/alerts', :rel => 'tooltip-right', :title => "#{current_user.unread_alerts.size} unread"}
+                  %i.fa.fa-exclamation-circle{:style => 'color: rgb(189, 0, 0)'}
+
+            %li.dropdown{:class => "#{'active' if params[:controller] == 'user'}"}
+              %a.dropdown-toggle{'data-toggle' => 'dropdown', :href => '#'}
+                %img.round-mini{:style => 'width: 20px; margin-bottom: 3px', :src => current_user.avatar(40)}
+                %i.caret{:style => 'margin-top: 11px'}
+              %ul.dropdown-menu
+                %li
+                  %a{:href => "#{current_user.path}"} Profile
+                %li
+                  %a{:href => '/alerts'} Alerts
+                %li
+                  %a{:href => '/messages'} Messages
+                %li
+                  %a{:href => "/users/#{current_user.path}/friends"} Friends
+                %li
+                  %a{:href => '/appeals'} Appeals
+                %li
+                  %a{:href => "/users/#{current_user.path}/edit"} Edit Profile
+                %li
+                  = link_to('Logout', destroy_session_path, :method => :delete)
+
+          - else
+
+            %li.dropdown
+              %a.dropdown-toggle{'data-toggle' => 'dropdown', :href => '#'}
+                Account
+                %i.caret
+              %ul.dropdown-menu
+                %li
+                  = link_to('Login', new_session_path)
+                %li
+                  = link_to('Register', registration_path)

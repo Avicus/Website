@@ -1,0 +1,63 @@
+- if (defined? revision) == nil
+  - revision = reply.revision
+
+- unless revision.reply.user.nil?
+  - if revision.archived?
+    .row-fluid
+      .span10
+        %p
+          %small
+            &nbsp;
+            %a.toggle-slide.fa.fa-caret-down{:rel => ".reply#{revision.id}", :title => 'Reveal/Hide Post'}
+            &nbsp; Reply by
+            = link_to_user(revision.reply.user)
+            was deleted by
+            = link_to_user(revision.user)
+            = time_ago revision.created_at
+            ago
+
+  %div{:id => "reply#{reply.id}", :class => "reply#{revision.id}", :style => revision.archived? ? 'display: none;' : ''}
+    .row-fluid
+      .span1{:style => 'padding-top: 3px; margin-right: 5px'}
+        %a{:href => revision.reply.user.path}
+          %img.round-mini{:src => revision.reply.user.avatar(45)}
+
+
+      .span11.no-margin
+        %b
+          = raw link_to_user(revision.reply.user)
+          = render 'forums/shared/user', :user => revision.reply.user
+
+        .post-extras
+          - if revision.sanctioned?
+            %strong{style: 'color: green', rel: 'tooltip', title: 'The response is by someone who knows what they are talking about.'}
+              .i.fa.fa-check-circle
+              Sanctioned Response
+          %i.fa.fa-calendar
+          %a{:href => find_reply_path(revision.reply), :rel => 'tooltip', :title => time_ago(revision.reply.created_at) + ' ago'}
+            = time_in_words(revision.reply.created_at, true)
+
+          - if revision.reply.can_edit?(current_user)
+            %i.fa.fa-pencil
+            = link_to 'Edit', edit_reply_path(reply)
+
+          - if revision.reply.discussion.can_view_revisions?(current_user)
+            %i.fa.fa-pencil-square-o
+            = link_to (pluralize reply.revisions.length - 1, 'revision'), reply_revisions_path(reply)
+
+          - if revision.archived?
+            %i.fa-times
+            Archived
+
+          %i.fa.fa-comments
+          = link_to reply do
+            = pluralize reply.replies.size, 'replies'
+
+          %i.fa.fa-reply
+          %a{:href => "#{new_reply_path}?reply_id=#{reply.id}"}
+            Reply
+
+    .row-fluid{:style => 'padding-top: 15px'}
+      .span12
+        .post-head
+          = render 'forums/replies/body', :reply => revision.reply, :revision => revision

@@ -1,0 +1,84 @@
+= content_for :title, 'Competitive Minecraft PvP'
+
+.banner
+  %video{:autoplay => '', :loop => '', :poster => 'http://hdwarena.com/wp-content/uploads/2017/04/Beautiful-Wallpaper.jpg'}
+  .overlay
+    %h1
+      = ORG::NAME
+      %p.lead.text-center
+        Your cool lead!
+    %br
+    .btn-group
+      - if get_cache 'twitch.online'
+        %a.btn.btn-danger.btn-large{:href => '/live'}
+          Now LIVE!
+      - else
+        %a.btn.btn-primary.btn-large{:href => '#minecraft'}
+          Join Now!
+
+- if @announcement
+  .ribbon.ribbon-green
+    = raw @announcement.body
+- if @banned
+  .ribbon.ribbon-red
+    You are currently banned from our servers.
+    %br
+    = link_to('Start an appeal', '/appeal', :class => 'btn btn-danger btn-large', :style => 'margin-top: 33px')
+
+%section.section.section-padded
+  .container-fluid
+    #landing.row-fluid.text-center
+      .span2.offset1
+        %img{:src => 'https://www.accucutcraft.com/media/catalog/product/cache/2/image/9df78eab33525d08d6e5fb8d27136e95/C/R/CR210.jpg'}
+        %h3.lead
+          Branding 1
+        %p
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        %a.btn{:href => '#'} BUTTON!
+      .span2
+        %img{:src => 'https://www.accucutcraft.com/media/catalog/product/cache/2/image/9df78eab33525d08d6e5fb8d27136e95/C/R/CR210.jpg'}
+        %h3.lead
+          Branding 2
+        %p
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        %a.btn{:href => '#'} BUTTON!
+      .span2
+        %img{:src => 'https://www.accucutcraft.com/media/catalog/product/cache/2/image/9df78eab33525d08d6e5fb8d27136e95/C/R/CR210.jpg'}
+        %h3.lead
+          Branding 3
+        %p
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        %a.btn{:href => '#'} BUTTON!
+      .span2
+        %img{:src => 'https://www.accucutcraft.com/media/catalog/product/cache/2/image/9df78eab33525d08d6e5fb8d27136e95/C/R/CR210.jpg'}
+        %h3.lead
+          Branding 4
+        %p
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        %a.btn{:href => '#'} BUTTON!
+      .span2
+        %img{:src => 'https://www.accucutcraft.com/media/catalog/product/cache/2/image/9df78eab33525d08d6e5fb8d27136e95/C/R/CR210.jpg'}
+        %h3.lead
+          Branding 5
+        %p
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        %a.btn{:href => '#'} BUTTON!
+
+
+%section.section.section-padded
+  .container-fluid
+    %h2
+      Latest Tweet
+      %small
+        Follow us on Twitter
+        @Twitter
+    %a.twitter-timeline{:href => 'https://twitter.com/Twitter', :'data-tweet-limit' => 1, :'data-chrome' => 'noheader nofooter noborders transparent noscrollbar'}
+    %script{:async => '', :charset => 'utf-8', :src => '//platform.twitter.com/widgets.js'}
+
+#minecraft
+  .title
+    Open Minecraft and connect with:
+  .form
+    .form-label Server Address
+    .minecraft-ip{:contentEditable => 'true', :title => 'Copy & Paste into Minecraft!', 'rel-a' => ORG::MC_IP, :rel => 'tooltip-down', :spellcheck => 'false'}
+      = ORG::MC_IP

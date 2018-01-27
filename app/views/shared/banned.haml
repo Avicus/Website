@@ -1,0 +1,32 @@
+= content_for :title, 'Website Ban'
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1 Website Ban Active
+        %p Access to the website has been restricted under your account.
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span12.text-center
+        %p
+          Reason:
+          %b
+            = @punishment.reason
+        %hr
+        %p
+          - if @punishment.type == 'web_ban'
+            A permanent website ban is active on your account.
+          - else
+            A temporary website ban which will expire on
+            %b
+              = time_in_words(@punishment.expires, true)
+            = '(' + time_ago(@punishment.expires) + ' remaining)'
+            is active on your account.
+        %p
+          If you believe this is an error or would like to dispute your ban, please visit the
+          %a{:href => '/support'} support
+          page.
+        %p
+          Be sure to revisit the rules if you before appealing.

@@ -1,0 +1,34 @@
+= content_for :title, 'Forums - Editing' + @category.name
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Editing:
+      = @category.forum.name + ' » ' + @category.name
+      .pull-right
+        = link_to 'Delete', admin_categories_destroy_path, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-danger'
+
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      = form_for @category, :url => admin_categories_update_path, :html => {:multipart => true, :method => :post} do |f|
+        %p Name
+        = f.text_field :name, :disabled => @editable.include?(:name) ? nil : ''
+        %p Description
+        = f.text_field :desc, :style => 'width: 507px;', :disabled => @editable.include?(:desc) ? nil : ''
+        %p Priority
+        = f.text_field :priority, :style => 'width: 57px;', :disabled => @editable.include?(:priority) ? nil : ''
+        %p Hide from Index Listing
+        = f.check_box :exclude_from_recent, :disabled => @editable.include?(:exclude_from_recent) ? nil : ''
+        %p
+          Tags
+          %small (Comma Seperated)
+        = f.text_field :tags, :style => 'width: 507px;', :disabled => @editable.include?(:tags) ? nil : ''
+        %br
+        %p Forum
+        %select{name: 'category[forum_id]', :disabled => @editable.include?(:forum_id) ? nil : ''}
+          - @forums.each do |f|
+            %option{:value => f.id, :selected => (@category.forum_id == f.id ? '' : nil)}=f.name
+        %br
+        = f.submit 'Update Category', :class => 'btn btn-primary'

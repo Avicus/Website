@@ -1,0 +1,22 @@
+- if reports.size > 0
+  %table.table.table-bordered.table-striped.table-no-sort
+    %thead
+      %tr
+        %th{:width => '13%'} Reported
+        %th{:width => '13%'} Reporter
+        %th{:width => '15%'} Reason
+        %th{:width => '15%'} Server
+        %th{:width => '20%'} Date
+    %tbody
+      - reports.each do |r|
+        - next unless r.can_execute?(current_user, :view)
+        %tr
+          %td= link_to_user(r.user)
+          %td= r.creator_id == 0 ? 'Console' : link_to_user(r.creator)
+          %td= truncate(r.reason.gsub(/&./, ''))
+          %td= r.server
+          %td= time_in_words r.created_at, true
+  .text-center
+    = will_paginate reports
+- else
+  %p.text-center No reports found.

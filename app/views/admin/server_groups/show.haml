@@ -1,0 +1,56 @@
+= content_for :title, 'Server Group Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Server Group Management
+      .pull-right
+        = link_to 'Back', admin_server_groups_path, :class => 'btn btn-info'
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span7
+        %h2{:style => 'text-align: center'} Member Actions
+        .row-fluid
+          - if @server_group.can_execute?(current_user, :add_member)
+            .span6
+              %h3 Add Member
+              = form_tag admin_server_group_add_member_path(@server_group) do
+                = text_field_tag 'server', nil, 'rel-data' => Server.all.map(&:name).to_json, :class => 'typeahead', :autocomplete => 'off'
+                %br
+                = submit_tag 'Add Member', :class => 'btn btn-primary'
+          .span4
+            %h3
+              Members
+            - @server_group.servers.each do |m|
+              - unless !@server_group.can_execute?(current_user, :remove_member)
+                %a{:href => admin_server_group_remove_member_path(@server_group) + "?server=#{m.name}", :method => :delete}
+                  %i.fa.fa-times
+              = m.name
+
+      .span5
+        %br
+        %br
+        = render 'form'
+
+    %hr
+    - if @editable.include?(:data)
+      %h1.text-center Data
+      = form_for @server_group, :url => admin_server_group_path do |f|
+        %h2
+          Uptime (By Day)
+          %small All times should be in 24 hour format and are based on UTC.
+        - Date::DAYNAMES.each_slice(4) do |set|
+          .row-fluid
+            - set.each do |day|
+              .span3
+                %h3=day
+                .field
+                  %label Start
+                  %input{:name => "server_group[data][uptime_range][#{day.downcase}][start]", :style => 'width: 150px', :type => 'text', :value => @server_group.get_data(:uptime_range, day.downcase, :start)}
+                .field
+                  %label End
+                  %input{:name => "server_group[data][uptime_range][#{day.downcase}][end]", :style => 'width: 150px', :type => 'text', :value => @server_group.get_data(:uptime_range, day.downcase, :end)}
+
+        = f.submit 'Update Data', :class => 'btn btn-primary'

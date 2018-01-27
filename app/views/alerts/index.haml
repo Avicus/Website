@@ -1,0 +1,47 @@
+= content_for :title, 'Alerts'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span9
+        .row-fluid
+          .span1{:style => 'width: 100px'}
+            %img{:src => '/assets/icons/box.png', :style => 'width: 90px'}
+          .span8.no-margin
+            %h1 Alerts
+            %p Notifications will appear here regarding teams and friendships.
+      .span3
+        %br
+        %a.pull-right.btn.btn-danger{:href => "/alerts?clear=1&user_id=#{current_user.id}"} Clear Alerts
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span12
+        %table.table.table-bordered.table-striped
+          %tr
+            %th{:style => 'width: 16px'}
+            %th Message
+            %th Actions
+          - @alerts.each do |alert|
+            %tr{:class => alert.unread?(current_user) ? 'warning' : ''}
+              %td
+                - if alert.unread?(current_user)
+                  %i.fa.fa-star
+              %td
+                %a{:href => alert.url}
+                  = alert.message
+                %small.gray
+                  = time_ago alert.created_at
+                  ago
+              %td
+                %a.btn.btn-primary.btn-mini{:href => alert.url, :rel => 'tooltip', :title => 'View'}
+                  %i.fa.fa-eye
+                %a.btn.btn-mini.btn-danger{:href => "/alerts/#{alert.id}", :rel => 'tooltip', :title => 'Delete'}
+                  %i.fa.fa-times
+
+        = will_paginate(@alerts)
+        - if current_user.alerts.size == 0
+          %p.text-center No alerts to display.
+
+- @alerts.map{|a| a.mark_as_read! :for => current_user}

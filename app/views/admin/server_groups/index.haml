@@ -1,0 +1,28 @@
+= content_for :title, 'Server Groups Management'
+
+= render 'admin/heads/index', subject: 'Server Group'
+
+%section.section-padded
+  .container-fluid
+    .table-responsive
+      %table.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th Name
+            %th Description
+            %th Server count
+            %th Slug
+            %th
+        %tbody
+          - @server_groups.each do |group|
+            %tr
+              %td
+                = link_to group.name, [:admin, group]
+              %td
+                = group.description
+              %td
+                = group.servers.size
+              %td
+                = group.slug
+              %td
+                = link_to 'Destroy', [:admin, group], method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger'

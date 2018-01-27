@@ -1,0 +1,13 @@
+%h3 Product Purchases
+.row-fluid
+  .span3
+    %blockquote
+      %h2
+        = number_with_delimiter @spent
+        %small credits spent
+  .span3
+    %blockquote
+      %h2
+        = number_with_delimiter @num_purchases
+        %small purchases made
+= bar_chart @products, :height => '4000px'

@@ -1,0 +1,486 @@
+
+.banner {
+  background: #000;
+  position: relative;
+  height: 400px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.banner video {
+  opacity: 0.8;
+  position: relative;
+  z-index: 0;
+  display: block;
+}
+
+.banner .overlay {
+  position: absolute;
+  z-index: 1;
+  color: #f3f3f3;
+  text-align: center;
+  width: 90%;
+  height: auto;
+  overflow: hidden;
+  margin: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+
+.banner .overlay h1 {
+  color: #fff;
+  font-size: 60px;
+  line-height: 60px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 2px #111;
+}
+
+.banner .overlay h3 {
+  color: #fff;
+  font-size: 30px;
+  line-height: 30px;
+  font-weight: 500;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 2px #111;
+}
+
+.banner .overlay p {
+  margin: 0;
+}
+
+.emoji {
+  vertical-align: middle;
+  height: 1.3em;
+}
+
+#content a.emoji-link {
+  opacity: 0.8;
+  text-decoration: none;
+}
+
+#content a.emoji-link:hover {
+  opacity: 1.0;
+  text-decoration: none;
+}
+
+.reactions {
+  padding: 5px 10px;
+  font-size: 13px;
+  border: 1px solid #f3f3f3;
+}
+
+.forum-table td {
+  line-height: 21px !important;
+}
+
+.peek-rblineprof-file pre {
+  white-space: pre;
+  word-wrap: normal;
+}
+
+/* Home Page */
+@font-face {
+  font-family: "Minecraft";
+  src: url("<%= asset_url('fonts/minecraft.eot') %>") format("eot"),
+  url("<%= asset_url('fonts/minecraft.woff') %>") format("woff"),
+  url("<%= asset_url('fonts/minecraft.tt') %>") format("truetype"),
+  url("<%= asset_url('fonts/minecraft.svg') %>") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.alert a:hover {
+  text-decoration: none !important;
+}
+
+.well-package-heading {
+  background-size: 140px 140px !important;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6) !important;
+}
+
+#status span {
+  color: #CFCFCF;
+  font-size: 14px;
+  padding-left: 2px;
+  padding-top: 2px;
+}
+
+.super-hero-unit img {
+  max-width: none !important;
+}
+
+#minecraft {
+  background-image: url('<%= image_url('bg/mc.png') %>');
+  font-family: "Minecraft", monospace;
+  color: #fff;
+  font-weight: normal;
+  text-align: center;
+  padding: 80px;
+  font-size: 16px;
+}
+
+#minecraft .form {
+  width: 35%;
+  min-width: 250px;
+  text-align: left;
+  color: #999;
+  margin: 40px auto 30px;
+}
+
+#minecraft .form .form-label {
+  margin: 15px 0;
+}
+
+#minecraft .form .minecraft-ip {
+  color: #fff;
+  background-color: black;
+  outline: none;
+  border: 2px solid #999;
+  width: 100%;
+  padding: 7px 7px 10px;
+}
+
+#minecraft .form .box br {
+  display: none
+}
+
+#landing .lead {
+  margin-top: 10px;
+}
+
+/* Forums */
+
+.toggle-ancestor {
+  color: #000;
+}
+
+.toggle-ancestor:hover {
+  text-decoration: none !important;
+}
+
+.map-banner {
+  height: 240px;
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  background-size: cover !important;
+  position: relative;
+}
+
+.map-banner .overlay {
+  position: absolute;
+  z-index: 1;
+  color: #f3f3f3;
+  text-align: center;
+  width: 90%;
+  height: auto;
+  overflow: hidden;
+  margin: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+
+.map-banner .overlay h1 {
+  color: #fff;
+  font-size: 50px;
+  line-height: 60px;
+  font-weight: 900;
+}
+
+.map-banner .overlay h3 {
+  color: #fff;
+  font-size: 20px;
+  line-height: 20px;
+  font-weight: 900;
+}
+
+.map-banner .overlay small {
+  font-size: 25px;
+  line-height: 60px;
+  font-weight: 900;
+}
+
+.map-banner .overlay p {
+  margin: 0;
+}
+
+/* Profile */
+
+.cover-art {
+  height: 240px;
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  background-size: cover !important;
+  position: relative;
+}
+
+.cover-art .user {
+  top: 30%;
+  position: absolute;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.cover-art .center {
+  margin: 0 auto;
+  display: block;
+  width: 70%;
+}
+
+.cover-art .avatar {
+  float: left;
+}
+
+.cover-art .info {
+  float: left;
+  margin-left: 20px;
+}
+
+.cover-art .info h1 {
+  margin: 0;
+}
+
+/* General */
+
+.round-mini {
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  margin: 0 1px;
+}
+
+.no-margin {
+  margin: 0 !important;
+}
+
+body {
+  background: #333 url('<%= 'bg/pattern.png' %>');
+}
+
+.span-center {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  float: none !important;
+}
+
+.radio-label input {
+  margin-bottom: 5px;
+  margin-left: 5px;
+}
+
+.highlight {
+  outline: 0px;
+  border-color: rgba(134, 201, 255, 1);
+  -webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px inset, rgba(82, 168, 236, 0.6) 0px 0px 8px;
+}
+
+.main-header {
+  padding: 20px 0;
+  background-color: #252525 !important;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.9);
+}
+
+.nav-header {
+  font-size: 13px;
+  color: #464646;
+  margin-left: -25px !important;
+  text-transform: uppercase;
+}
+
+.form-inline {
+  margin: 0;
+}
+
+.checkbox input {
+  margin-top: 6px;
+}
+
+.stripe-top {
+  border-top: 2px solid #2af;
+}
+
+.section-last {
+  padding-bottom: 0px !important;
+}
+
+.section-dark a, .section-dark a:hover {
+  color: #D0D0D0;
+}
+
+.section-dark .btn, .section-dark .btn:hover {
+  color: white;
+}
+
+.main-header h1 {
+  padding: 0;
+  margin: 0;
+  text-transform: none;
+}
+
+.main-header h1 small {
+  font-weight: 300;
+  color: #E9E9E9;
+}
+
+.main-header p {
+  padding: 0;
+  margin: 0;
+  color: #DFDFDF !important;
+}
+
+th.warning, td.warning {
+  background-color: #fcf8e3 !important;
+}
+
+blockquote.green {
+  border-color: #5CAE24;
+}
+
+blockquote.yellow {
+  border-color: #FFD500;
+}
+
+blockquote.orange {
+  border-color: #DFAA20;
+}
+
+blockquote.red {
+  border-color: #EC5353;
+}
+
+.console {
+  color: #f1f1f1;
+  background-color: #0e0e0e;
+  height: 600px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+.console-wrapper {
+
+}
+
+.console-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px;
+  border-radius: 0;
+  outline: 0;
+  font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+}
+
+.console-wrapper input:focus {
+  border: solid 1px #ccc;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  transition: none;
+  -moz-transition: none;
+  -webkit-transition: none;
+}
+
+.online {
+  border-radius: 50%;
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  background-color: #4EB016;
+}
+
+.online.gray {
+  background-color: #A6A6A6;
+}
+
+.online.yellow {
+  background-color: #E0D242;
+}
+
+.online.orange {
+  background-color: #FF8E20;
+}
+
+.offline {
+  border-radius: 50%;
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  background-color: #D81B1B;
+}
+
+[rel=fancy] {
+  width: 100%;
+  height: 200px;
+}
+
+.sticky td {
+  background-color: #fcf8e3 !important;
+}
+
+select {
+  line-height: 24px;
+  width: 100%;
+}
+
+option[disabled="disabled"] {
+  color: #777;
+}
+
+.text-wrapper {
+  position: relative;
+}
+
+.text-input-label {
+  position: absolute;
+  left: 5px;
+  top: 3px;
+  color: #999;
+}
+
+.text-input {
+  padding-left: 105px !important;
+}
+
+.field_with_errors {
+  color: #D46363;
+}
+
+.field_with_errors label:after {
+  content: '*';
+}
+
+.row-fluid .pull-left[class*="span"]:last-child {
+  margin-left: 0;
+}
+
+@media (max-width: 767px) {
+  .row-fluid .pull-right[class*="span"] {
+    float: none;
+  }
+}
+
+div.friend {
+	position: relative;
+  padding: 4px 5px;
+  display: inline-block;
+}
+
+a.friend-actions {
+	position: relative;
+	float: right;
+	color: black;
+	height: 0;
+  right: -6px;
+	margin: 0;
+	padding: 0;
+}
+
+.map-authors {
+  border-left: thin solid #f2f2f4;
+  padding-left: 4px;
+}

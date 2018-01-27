@@ -1,0 +1,8 @@
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      = subject.pluralize
+      Management
+      .pull-right
+        %a{:class => 'btn btn-primary', :href => admin_path} Back
+        = link_to "New #{subject}", "#{request.fullpath}/new", :class => 'btn btn-success'

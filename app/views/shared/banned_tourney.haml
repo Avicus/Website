@@ -1,0 +1,25 @@
+= content_for :title, 'Tournament Ban'
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1 Tournament Ban Active
+        %p Access to participate in tournaments has been restricted under your account.
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span12.text-center
+        %p
+          Reason:
+          %b
+            = @punishment.reason
+        %hr
+        %p
+          A tournament ban is active on your account.
+        %p
+          If you believe this is an error or would like to dispute your ban, please visit the
+          %a{:href => '/support'} support
+          page.
+        %p
+          Be sure to revisit the rules if you do before appealing.

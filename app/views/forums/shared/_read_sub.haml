@@ -1,0 +1,10 @@
+= form_tag(mark_all_read_path, {:method => 'post', :class => 'pull-right form-inline', :style => 'padding-top: 10px'}) do
+  &nbsp;
+  = hidden_field_tag 'discussion_id', @discussion.id unless @discussion.nil?
+  = hidden_field_tag 'category_id', @category.id unless @category.nil?
+  = submit_tag 'Mark All Read', :data => {:confirm => 'Are you sure want to mark all posts in this discussion as read?'}, :class => 'btn btn-primary'
+- if sub
+  = form_tag("/forums/discussions/#{@discussion.uuid}/subscribe", {:method => 'post', :class => 'pull-right form-inline', :style => 'padding-top: 10px'}) do
+    = hidden_field_tag 'page', params[:page].to_i + 1
+    = hidden_field_tag 'user_id', current_user.id
+    = submit_tag (current_user.subscriptions.include?(@discussion.id) ? 'Unsubscribe' : 'Subscribe'), :class => 'btn btn-warning'

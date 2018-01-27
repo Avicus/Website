@@ -1,0 +1,67 @@
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span1
+        %a{:href => @punishment.user.path}
+          %img.img-rounded{:src => @punishment.user.avatar(68), :style => 'margin-top: 5px'}
+      .span11{:style => 'margin-left: 15px'}
+        %h1
+          Editing Punishment for
+          = link_to_user(@punishment.user)
+        %p
+          Occurred
+          = time_ago(@punishment.date)
+          ago
+
+%section.section-padded
+  .row-fluid
+    .container-fluid{:class => @punishment.can_execute?(current_user, :delete) ? 'span8' : 'span12'}
+      = form_for(@punishment) do |f|
+        - if @punishment.errors.any?
+          .alert.alert-danger
+            #error_explanation
+              %h4 Errors:
+              %ul
+                - @punishment.errors.full_messages.each do |msg|
+                  %li #{msg}
+
+        .row-fluid
+          .span6
+            .field
+              = f.label :user_id, 'Victim'
+              = f.text_field :user_id, :name => 'punishment[user]', :class => 'typeahead', :style => 'width: 100%', :autocomplete => 'off', :value => User.find_by_id(@punishment.user_id).username, :disabled => @editable.include?(:user_id) ? nil : ''
+          .span6
+            .field
+              = f.label :staff_id, 'Staff (Blank for console)'
+              = f.text_field :staff_id, :name => 'punishment[staff]', :style => 'width: 100%', :class => 'typeahead', :autocomplete => 'off', :value => (@punishment.staff.nil? ? '' : User.find_by_id(@punishment.staff_id).username), :disabled => @editable.include?(:staff_id) ? nil : ''
+        .row-fluid
+          .span6
+            .field{:style => 'width: 100%'}
+              = f.label :type, 'Type'
+              = f.select :type, @punish_types, :disabled => @editable.include?(:type) ? nil : ''
+          .span6
+            .field{:style => 'width: 100%'}
+              = f.label :expires, 'Expires'
+              = f.text_field :expires, :id => 'datepicker', :style => 'width: 100%', :value => (@punishment.expires.nil? ? '' : @punishment.expires.strftime('%m/%d/%Y %H:%M')), :disabled => @editable.include?(:expires) ? nil : ''
+        .field
+          = f.label :reason, 'Reason'
+          = f.text_field :reason, :style => 'width: 100%', :disabled => @editable.include?(:reason) ? nil : ''
+        %label.checkbox
+          = f.check_box :appealed, :disabled => @editable.include?(:appealed) ? nil : ''
+          Appealed
+        .actions
+          = f.submit :class => 'btn btn-success'
+    - if @punishment.can_execute?(current_user, :delete)
+      .alert.span3#alert.info
+        %strong{style: 'font-size: 22px;'} DELETING INFRACTIONS:
+        %p
+          Once an infraction is deleted it can never be recovered. Please keep this in mind before deleting this infraction. This button is equivalent to
+          %code /appeal -d (id) (info)
+          ingame. Please be careful.
+          %br
+          = link_to 'Delete', @punishment, method: :delete, data: { confirm: 'Are you sure you want to delete this infraction?' }, :class => 'btn btn-danger'
+
+:javascript
+  jQuery('#datepicker').datetimepicker({
+      format: 'm/d/Y H:i',
+  });

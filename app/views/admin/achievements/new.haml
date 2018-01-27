@@ -1,0 +1,12 @@
+= content_for :title, 'Achievements Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Achievement Management
+      .pull-right
+        = link_to 'Back', admin_achievements_path, :class => 'btn btn-info'
+
+%section.section-padded
+  .container-fluid
+    = render 'form'

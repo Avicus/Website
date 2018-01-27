@@ -1,0 +1,35 @@
+= content_for :title, 'Server Stats'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1
+          Server Stats
+        %p
+          View graphs and statistics.
+
+%section.section.section-padded
+  .container-fluid
+    .tabbable
+      %ul.nav.nav-tabs
+        - @panels.each do |stat|
+          %li
+            %a.panel{'rel-panel' => stat, :href => "##{stat}", 'data-toggle' => 'tab'}= titleize(stat.to_s.capitalize.gsub('_', ' '))
+      .tab-content
+        - @panels.each do |stat|
+          .tab-pane{:id => "#{stat}"}
+            Please click a tab to continue
+
+:javascript
+  $(".panel").click(function() {
+     // Get the URL for the action thats going to be executed when clicked this tab
+     jQuery.get('/admin/stats/' + $(this).attr("rel-panel"), function( data ) {
+        // Clear all first so charts load, and to ensure new results each time.
+        $(".tab-pane").each(function() {
+          $(this).html("LOADING...");
+        });
+        // Replace with current data
+        $( ".tab-pane.active").html( data );
+      });
+  })

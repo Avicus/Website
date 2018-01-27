@@ -1,0 +1,60 @@
+= content_for :title, 'Appeals'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1
+          Appeal
+        %p Appeal punishments that you feel are invalid.
+
+%section.section-padded
+  .container-fluid
+    .alert.alert-info
+      Below are all the appealable punishments for the
+      - if logged_in?
+        currently logged in user.
+      - else
+        current IP address.
+      If a punishment that you would like to appeal is not listed here, please contact ORG::EMAIL
+    - if @punishments && @punishments.size > 0
+      .table-responsive
+        %table.table.table-bordered.table-striped.table-no-sort.no-margin
+          %thead
+            %tr
+              %th{:width => '5%'} #
+              %th{:width => '13%'} Punished
+              %th{:width => '13%'} Staff
+              %th{:width => '7%'} Type
+              %th{:width => '15%'} Reason
+              %th{:width => '20%'} Date
+              %th{:width => '20%'} Expires
+              %th Appeal
+          %tbody
+            - @punishments.each do |punishment|
+              - next if punishment.user == nil || !punishment.can_execute?(current_user, :view)
+              %tr{:class => punishment.appealed? ? 'success' : ''}
+                %td
+                  = link_to punishment.id, punishment_path(punishment)
+                %td
+                  = link_to_user(punishment.user)
+                %td
+                  - if punishment.staff_id == 0 || punishment.staff.nil?
+                    Console
+                  - else
+                    = link_to_user(punishment.staff)
+                %td
+                  = punishment.type.gsub('_',' ').titleize
+                %td
+                  = punishment.reason
+                %td
+                  = time_in_words punishment.date, true
+                %td
+                  = (punishment.expires.presence) ? time_in_words(punishment.expires, true) : ''
+                %td
+                  = link_to 'Appeal', new_appeal_path + "/?punishment_id=#{punishment.id}", :class => 'btn btn-mini btn-info'
+        %p
+          - if @punishments.respond_to?(:total_pages)
+            = will_paginate punishments
+    - else
+      No punishments found.

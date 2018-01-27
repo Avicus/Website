@@ -1,0 +1,23 @@
+- revision = revision.presence ? revision : reply.revision
+
+- if reply.reply.presence
+  %blockquote{:style => 'position: relative; display: block'}
+    - unique = rand(0..5000)
+    %div{:id => "quote#{reply.reply.id}#{unique}", :style => 'display:none; font-weight: 400'}
+      = render 'forums/replies/body', :reply => reply.reply
+    %small.no-dash
+      %a.toggle-slide.fa.fa-caret-down{:rel => "#quote#{reply.reply.id}#{unique}", :title => 'Reveal/Hide Quote'}
+      \&nbsp; Replied to
+      = link_to_user(reply.reply.user) + "'s post"
+      from
+      = link_to time_in_words(reply.reply.created_at, true), find_reply_path(reply.reply)
+
+- taggedbody = revision.body
+- revision.body.scan(/{tag=(.*?)}/).first(100).each do |t|
+  - uuid = t.first
+  - search = User.where(:uuid => uuid)
+  - unless search.nil?
+    - user = search.first
+    - unless user.nil?
+      - taggedbody.gsub!("{tag=#{uuid}}", "#{link_avatar_to_user(user, 16, :class => 'img-rounded')} #{link_to_user(user)}")
+= raw html_safe taggedbody

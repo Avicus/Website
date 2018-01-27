@@ -1,0 +1,29 @@
+= content_for :title, 'New Discussion'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span6
+        %h1 New Discussion
+        %p Create a new discussion topic on the forums.
+
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+
+      .span9.pull-right
+        .breadcrumb
+          %li
+            %a{:href => '/forums'} Discussions
+            %span.divider /
+          %li
+            %a{:href => "/forums/categories/#{@category.id}"}
+              = @category.name
+            %span.divider /
+          %li.active.target
+            New Topic
+        = render 'form', :show_archive => false
+
+      .span3.sidebar.pull-left
+        = render 'forums/shared/navigation', :forums => @forums, :categories => @categories, :active => @category.id

@@ -1,0 +1,26 @@
+= form_for([:admin, @server]) do |f|
+  - if @server.errors.any?
+    .alert.alert-danger
+      #error_explanation
+        %h4 Errors:
+        %ul
+          - @server.errors.full_messages.each do |msg|
+            %li #{msg}
+  %label.checkbox
+    = f.check_box :permissible, :disabled => @editable.include?(:permissible) ? nil : ''
+    Permissible?
+  %br/
+  .alert.alert-warning
+    %b Use caution when changing the fields. Invalid fields may result in severe unintended consequences.
+    .field
+      = f.label :name, :disabled => @editable.include?(:name) ? nil : ''
+      = f.text_field :name
+    .field
+      = f.label :host, :disabled => @editable.include?(:host) ? nil : ''
+      = f.text_field :host
+    .field
+      = f.label :port
+      = f.number_field :port, :disabled => @editable.include?(:port) ? nil : ''
+
+  .actions
+    = f.submit :class => 'btn btn-success'

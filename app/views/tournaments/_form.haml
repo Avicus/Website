@@ -1,0 +1,49 @@
+= form_for(@tournament) do |f|
+  - if @tournament.errors.any?
+    .alert.alert-danger
+      #error_explanation
+        %h4 Errors:
+        %ul
+          - @tournament.errors.full_messages.each do |msg|
+            %li #{msg}
+
+  .row-fluid
+    .span5
+      = f.label :name
+      = f.text_field :name, :class => 'span12'
+    .span1
+      = f.label :header, :rel => 'tooltip', :title => 'Configure display of the tournament name header.'
+      = f.check_box :header, :disabled => @editable.include?(:header) ? nil : ''
+    .span3
+      = f.label :allow_loners, :rel => 'tooltip', :title => 'Allow players without teams to register.'
+      = f.check_box :allow_loners, :disabled => @editable.include?(:allow_loners) ? nil : ''
+
+  .row-fluid
+    .span5.inline
+      = f.label :open_at, 'Registration open time (UTC)'
+      = f.datetime_select :open_at, :order => [:hour, :minute, :day, :month, :year], :ampm => true, :default => 1.week.from_now, :disabled => @editable.include?(:open_at) ? nil : ''
+
+    .span5.inline
+      = f.label :close_at, 'Registration close time (UTC)'
+      = f.datetime_select :close_at, :order => [:hour, :minute, :day, :month, :year], :ampm => true, :default => 4.weeks.from_now, :disabled => @editable.include?(:close_at) ? nil : ''
+
+  .row-fluid
+    .span2
+      = f.label :min, 'Minimum Roster Size'
+      = f.select :min, (0..50), :disabled => @editable.include?(:min) ? nil : ''
+
+    .span2
+      = f.label :max, 'Maximum Roster Size'
+      = f.select :max, (4..50), :disabled => @editable.include?(:max) ? nil : ''
+
+  .row-fluid
+    .span10
+      = f.text_area :about, :rel => 'fancy', :style => 'height: 400px', :disabled => @editable.include?(:about) ? nil : ''
+
+  = f.submit :class => 'btn btn-primary'
+
+:css
+  .inline select {
+    display: inline;
+    width: auto;
+  }

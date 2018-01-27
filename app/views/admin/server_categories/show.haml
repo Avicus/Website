@@ -1,0 +1,33 @@
+= content_for :title, 'Server Category Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Server Category Management
+      .pull-right
+        = link_to 'Back', admin_server_categories_path, :class => 'btn btn-info'
+
+%section.section-padded
+  .container-fluid
+    %h2{:style => 'text-align: center'} Member Actions
+    .row-fluid
+      - if @server_category.can_execute?(current_user, :add_member)
+        .span6
+          %h3 Add Member
+          = form_tag admin_server_category_add_member_path(@server_category) do
+            = text_field_tag 'server', nil, 'rel-data' => Server.all.map(&:name).to_json, :class => 'typeahead', :autocomplete => 'off'
+            %br
+            = submit_tag 'Add Member', :class => 'btn btn-primary'
+      .span4
+        %h3
+          Members
+        - @server_category.servers.each do |m|
+          - unless !@server_category.can_execute?(current_user, :remove_member)
+            %a{:href => admin_server_category_remove_member_path(@server_category) + "?server=#{m.name}", :method => :delete}
+              %i.fa.fa-times
+          = m.name
+%hr
+  .container-fluid
+    = render 'form'
+
+%br

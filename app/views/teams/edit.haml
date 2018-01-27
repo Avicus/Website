@@ -1,0 +1,13 @@
+= content_for :title, @team.title
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span4
+        %h1 Editing Team
+
+%section
+  .container-fluid
+    .row-fluid
+      .span12
+        = render 'form'

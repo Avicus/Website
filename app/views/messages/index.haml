@@ -1,0 +1,64 @@
+= content_for :title, 'Messages'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span9
+        .row-fluid
+          .span1{:style => 'width: 100px'}
+            %img{:src => '/assets/icons/box.png', :style => 'width: 90px'}
+          .span8.no-margin
+            %h1 Messages
+            %p Messages which you have sent and received from other users.
+      .span3
+        %br
+        .pull-right
+          %a.btn.btn-danger{:href => "/messages?clear=1&user_id=#{current_user.id}"} Clear Messages
+          %a.btn.btn-success{:href => '/messages/compose'} Compose Message
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span12
+        .tabbable
+          %ul.nav.nav-tabs
+            %li{:class => 'active'}
+              %a{:href => '#received', 'data-toggle' => 'tab'} Received
+            %li
+              %a{:href => '#sent', 'data-toggle' => 'tab'} Sent
+          .tab-content{:style => 'overflow: visible'}
+            #received.tab-pane{:class => 'active'}
+              %table.table.table-bordered.table-striped
+                %tr
+                  %th{style: 'width: 11%'} From
+                  %th Message
+                  %th{style: 'width: 3%'}
+                - @received.each do |sent|
+                  %tr
+                    %td
+                      = link_to_user(sent.sender)
+                    %td
+                      = raw html_safe sent.content.gsub("\n", '<br>')
+                    %td
+                      %div.btn-group
+                        %a.btn.btn-success.btn-mini{:href => "/messages/compose?to=#{sent.sender.id}"} Reply
+                        %a.btn.btn-danger.btn-mini{:href => "/messages/delete?id=#{sent.id}"} X
+
+              = will_paginate(@received)
+              - if @received.size == 0
+                %p.text-center No messages to display.
+            #sent.tab-pane
+              %table.table.table-bordered.table-striped
+                %tr
+                  %th{style: 'width: 11%'} To
+                  %th Message
+                - @sent.each do |sent|
+                  %tr
+                    %td
+                      = link_to_user(sent.receiver)
+                    %td
+                      = raw html_safe sent.content.gsub("\n", '<br>')
+
+              = will_paginate(@sent)
+              - if @sent.size == 0
+                %p.text-center No messages to display.

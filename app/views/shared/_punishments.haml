@@ -1,0 +1,52 @@
+- if punishments && punishments.size > 0
+  .table-responsive
+    %table.table.table-bordered.table-striped.table-no-sort.no-margin
+      %thead
+        %tr
+          %th{:width => '5%'} #
+          %th{:width => '13%'} Punished
+          %th{:width => '13%'} Staff
+          %th{:width => '7%'} Type
+          %th{:width => '15%'} Reason
+          %th{:width => '22%'} Date
+          %th{:width => '12%'} Expires
+          - if logged_in?
+            %th{:width => '16%'} Actions
+      %tbody
+        - punishments.each do |p|
+          - next if p.user == nil || !p.can_execute?(current_user, :view)
+          - next if p.appealed? && !p.can_execute?(current_user, :view_appealed)
+          %tr{:class => p.appealed? ? 'success' : ''}
+            %td
+              = link_to p.id, punishment_path(p)
+            %td
+              = link_avatar_to_user(p.user, 16) + ' ' + link_to_user(p.user)
+            %td
+              - if p.staff_id == 0 || p.staff.nil?
+                Console
+              - else
+                =  link_avatar_to_user(p.staff, 16) + ' ' +link_to_user(p.staff)
+            %td
+              = p.type.gsub('_',' ').titleize
+            -#{:style => 'word-break: break-all'} work on this again
+            %td
+              = p.reason
+            %td
+              = time_in_words p.date, true
+            %td
+              = (p.expires.presence) ? time_in_words(p.expires, true) : ''
+            - if logged_in?
+              %td
+                .actions
+                  - if p.can_execute?(current_user, :update)
+                    = link_to 'Edit', edit_punishment_path(p), :class => 'btn btn-mini btn-info'
+                  - if !p.appealed?
+                    - if !Appeal.where(:punishment_id => p.id).empty? && Appeal.can_execute?(current_user, p, :view)
+                      = link_to 'See Appeal', appeal_path(Appeal.where(:punishment_id => p.id).first), :class => 'btn btn-mini btn-warning'
+                    - elsif current_user == p.user
+                      = link_to 'Appeal', new_appeal_url + "?punishment_id=#{p.id}", :class => 'btn btn-mini btn-danger'
+    %p
+      - if punishments.respond_to?(:total_pages)
+        = will_paginate punishments
+- else
+  No punishments found.

@@ -1,0 +1,12 @@
+= content_for :title, 'Server Category Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Server Category Management
+      .pull-right
+        = link_to 'Back', admin_server_categories_path, :class => 'btn btn-info'
+
+%section.section-padded
+  .container-fluid
+    = render 'form'

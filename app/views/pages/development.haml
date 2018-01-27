@@ -1,0 +1,76 @@
+= content_for :title, 'Development'
+
+- can_view_links = current_user.nil? ? false : current_user.has_permission?(:application_controllers, :view, :development_sha_links, true)
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span9
+        %h1 Development
+        %p View the latest changes to all of our projects.
+      .span3
+        %br
+        %a{href: '/issues', class: 'btn btn-danger btn-large pull-right'}
+          %i.fa.fa-exclamation-circle
+          Report an Issue
+
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span12
+        .tabbable.tabs-left
+          %ul.nav.nav-tabs
+            - @repos.each do |name,repo|
+              %li{:class => @name == name ? 'active' : ''}
+                %a{:href => "/development/#{name}"}
+                  = name
+          .tab-content
+            .active.tab-pane
+              .row-fluid
+                %p{style: 'text-align: center'}
+                  %b Repository:
+                  - if @repo[:public] || can_view_links
+                    = link_to @repo[:name], "https://github.com/#{@repo[:owner]}/#{@repo[:name]}"
+                  - else
+                    = @repo[:name]
+                  %br
+                  %b Description:
+                  = raw @repo[:about]
+                .table-responsive
+                  %table.table.table-bordered.table-striped
+                    %tr
+                      %th{:style => 'width: 5%'} SHA
+                      %th{:style => 'width: 17%'} Author
+                      %th{:style => 'width: 59%'} Description
+                      %th{:style => 'width: 18%'} Date
+
+
+                    - @commits.each do |commit|
+                      - clazz = 'warning'
+                      - if commit.current
+                        - clazz = 'success'
+                      - elsif commit.deployed
+                        - clazz = ''
+
+                      - user = UserDetail.find_by_github(commit.author)
+                      - user = user ? user.user : nil
+
+                      %tr{class: clazz}
+                        %td
+                          - if @repo[:public] || can_view_links
+                            = link_to commit.sha[0..6], "https://github.com/#{@repo[:owner]}/#{@repo[:name]}/commit/#{commit.sha}"
+                          - else
+                            = commit.sha[0..6]
+                        %td
+                          - if user
+                            %img.round-mini{:src => user.avatar(15), :rel => 'tooltip', :title => 'Github: ' + commit.author}
+                          = user ? link_to_user(user) : commit.author
+                        %td
+                          = raw rich_commit(commit.message.split("\n").first)
+                        %td
+                          = time_ago commit.created_at
+                          ago
+
+                %p
+                = will_paginate @commits

@@ -1,0 +1,94 @@
+- content_for :title, 'Player Stats'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span4
+        %h1 Player Stats
+        %p Find statistics for any player.
+      .span8
+        = form_tag(params, :method => :get) do
+          .row-fluid.pull-right
+            .span4
+              %b Period:
+              = select_tag(:period, options_for_period(params[:period]), :onchange => 'this.form.submit()')
+            .span3
+              %b Sorted by:
+              = select_tag(:sort, options_for_sort(params[:sort]), :onchange => 'this.form.submit()')
+            .span5
+              %p
+                %b Username:
+              .input-append
+                = text_field_tag :query, params[:query], :class => 'typeahead', :autocomplete => 'off'
+                %input.btn.btn-info{:type => 'submit', :value => 'Search'}
+
+
+%section
+  .container-fluid
+    .row-fluid
+      .span12
+        - if @user
+          = render('user_summary', :user => @user)
+
+        .page-header
+          %h3
+            Leaderboard
+
+        - if @entries.empty?
+          %p
+            Query did not match any stats.
+        - else
+          .table-responsive
+            %table.table.table-bordered.table-striped
+              %thead
+                %tr
+                  %th Rank
+                  %th Player
+                  %th K/D
+                  %th Kills
+                  %th Deaths
+                  %th Monuments
+                  %th Wools
+                  %th Time Online
+              %tbody
+                - @entries.each do |entry|
+                  - # shouldn't happen
+                  - if entry.user == nil
+                    - next
+
+                  %tr{:class => (@user and @user.id == entry.user_id) ? 'warning' : ''}
+                    %td
+                      %h3{class: 'no-margin no-padding', style: 'text-align: right; font-weight: 300; font-size: 40px'}
+                        = get_ranking(@entries, entry)
+                    %td
+                      .span3{style: 'width: 37px'}
+                        %img.round-mini{:src => entry.user.avatar(45)}
+                      .span9{style: 'margin-left: 8px; margin-top: -7px'}
+                        = link_to_user(entry.user)
+                        %hr{style: 'margin: 0'}
+                        - last = Session.where(:user_id => entry.user.id).order('created_at DESC').limit(1).first
+                        - unless last.nil?
+                          %small
+                            - if last.is_active?
+                              %i{style: 'color: green'}
+                                Online:
+                                = last.server.name
+                            - else
+                              %i{style: 'color: red'}
+                                Last seen
+                                = time_ago(last.updated_at)
+                                ago
+                    %td
+                      = entry.kd_ratio.round(2)
+                    %td
+                      = number_with_delimiter(entry.kills)
+                    %td
+                      = number_with_delimiter(entry.deaths)
+                    %td
+                      = number_with_delimiter(entry.monuments)
+                    %td
+                      = number_with_delimiter(entry.wools)
+                    %td
+                      = seconds_to_time(entry.time_online)
+          = will_paginate(@entries)
+    %br/

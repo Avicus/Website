@@ -1,0 +1,143 @@
+.row-fluid
+  - unless @previous.nil?
+    .alert.alert-warning.span9
+      This user was formerly known as
+      = @previous.username
+      , but has recently changed their Minecraft username to
+      = @user.name + '.'
+.row-fluid
+  .span1
+    %span.label.label-info{style: 'font-size: 14px;padding: 9px'} Core Data
+  .span3
+    %h2
+      %i{:class => 'fa fa-clock-o'}
+      Joined
+      %small{:rel => 'tooltip', :title => time_in_words(@user.created_at, true)}
+        = time_ago(@user.created_at)
+        ago
+  - if @user.details.gender.presence
+    .span2
+      %h2
+        %i{:class => "fa fa-#{@user.details.gender.downcase}"}
+        Gender
+        %small= @user.details.gender
+  - if @user.details.interests.presence
+    .span5
+      %h2
+        %i.fa.fa-star
+        Interests
+        %small= @user.details.interests
+.row-fluid{style: 'padding-left: 100px'}
+  .span3
+    %h2
+      %i.fa.fa-clock-o
+      Time Online
+      %small= seconds_to_time @time
+  .span4
+    %h2
+      %i.fa.fa-chevron-up
+      Server Joins
+      %small= number_with_delimiter @joins
+  .span5
+    %h2
+      %i.fa.fa-certificate
+      Credits
+      %small= number_with_delimiter @credits
+- if @user.details.steam.presence || @user.details.skype.presence || |
+      @user.details.facebook.presence || @user.details.twitch.presence || |
+      @user.details.twitter.presence || @user.details.github.presence || |
+      @user.details.discord.presence || @user.details.instagram.presence |
+  .row-fluid
+    .span1
+      %span.label.label-warning{style: 'font-size: 13px;padding: 8px'} Social Media
+    / Steam
+    - if @user.details.steam.presence
+      .span2
+        %h3
+          %i.fa.fa-steam{:title => 'Steam'}
+          %small
+            %a{:href => "http://steamcommunity.com/id/#{@user.details.steam}", :target => '_blank'}
+              = @user.details.steam
+
+    / Skype
+    - if @user.details.skype.presence
+      .span2
+        %h3
+          %i.fa.fa-skype{:title => 'Skype'}
+          %small
+            %a{:href => "skype:#{@user.details.skype}?userinfo", :target => '_blank'}
+              = @user.details.skype
+
+    / Facebook
+    - if @user.details.facebook.presence
+      .span2
+        %h3
+          %i.fa.fa-facebook{:title => 'Facebook'}
+          %small
+            %a{:href => "http://facebook.com/#{@user.details.facebook}", :target => '_blank'}
+              = @user.details.facebook
+
+    / Twitch
+    - if @user.details.twitch.presence
+      .span2
+        %h3
+          %i.fa.fa-twitch{:title => 'Twitch'}
+          %small
+            %a{:href => "http://twitch.tv/#{@user.details.twitch}", :target => '_blank'}
+              = @user.details.twitch
+  .row-fluid{style: 'padding-left: 100px'}
+    / Twitter
+    - if @user.details.twitter.presence
+      .span2
+        %h3
+          %i.fa.fa-twitter{:title => 'Twitter'}
+          %small
+            %a{:href => "http://twitter.com/#{@user.details.twitter}", :target => '_blank'}
+              = @user.details.twitter
+
+    / Instagram
+    - if @user.details.instagram.presence
+      .span2
+        %h3
+          %i.fa.fa-instagram{:title => 'Instagram'}
+          %small
+            %a{:href => "https://instagram.com/#{@user.details.instagram}", :target => '_blank'}
+              = @user.details.instagram
+
+    / Github
+    - if @user.details.github.presence
+      .span2
+        %h3
+          %i.fa.fa-github{:title => 'Github'}
+          %small
+            %a{:href => "https://github.com/#{@user.details.github}", :target => '_blank'}
+              = @user.details.github
+
+    / Discord
+    - if @user.details.discord.presence
+      .span2
+        %h3
+          %i.fa.fa-microphone-slash{:title => 'Discord'}
+          %small
+            = @user.details.discord
+- if @user.team != nil
+  .row-fluid
+    .span1
+      %span.label.label-success{style: 'font-size: 14px;padding: 7px'} Competitive
+    .span3
+      %h2
+        %i.fa.fa-flag
+        Team:
+        %small
+          %a{:href => @user.team.path}= @user.team.title
+    .span3
+      %h2
+        %i.fa.fa-bookmark
+        Role:
+        %small= @user.team.get_role(@user).capitalize
+    .span3
+      %h2
+        %i.fa.fa-user
+        Members:
+        %small= @user.team.members.size
+%hr

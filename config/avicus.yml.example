@@ -1,0 +1,39 @@
+# Configuration sections are divided into app states.
+# Default is combined with all of the other specific states.
+# States are based on the environment of the app.
+
+default:
+  redis: # Redis Configuration
+    host: localhost
+    port: 6379
+    password: password
+    db: 0
+
+  salt: salt # Salt that is used for legacy passwords.
+  override-perms: true # If permissions checks should return true for all users of the app.
+  no-redirect: true # If the app should redirect users to a secure version of the site.
+
+  twitch: # Twitch Configuration
+    client-id: xxxxxx # API token
+
+  github: # Github Configuration
+    api-auth: 'xxxxxxxxxxxxxxxxxxx' # API token (v3)
+
+  maps-path: ~/atlas/maps # Path to search for maps in.
+  ignored-map-directories: ["MapTesting", "Storage"] # Directories that should be ignored during the gathering of maps.
+
+  api-out: tmp/out # Path where the graphql generator will dump classes.
+
+  smtp: # Mailer Configuration
+    port: 587
+    host: mail.zoho.com
+    domain: avicus.net #Change this
+    username: username
+    password: password
+
+  offline-forums: false # If the forums should accept new posts and display current ones.
+
+development:
+  redis:
+    db: 1
+  override-perms: true

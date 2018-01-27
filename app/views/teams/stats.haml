@@ -1,0 +1,72 @@
+.row-fluid
+  .span6
+    %h2 Statistics
+    %table.table.table-bordered.table-striped
+      %tr
+        %td
+          %b Kills
+        %td
+          = @kills.size
+      %tr
+        %td
+          %b Deaths
+        %td
+          = @deaths.size
+      %tr
+        %td
+          %b K/D
+        %td
+          = (@kills.size.to_d / (@deaths.size == 0 ? 1 : @deaths.size.to_d)).round(4)
+      %tr
+        %td
+          %b PVP K/D
+        %td
+          = (@kills.size.to_d / (@deaths.where('cause != 0').size == 0 ? 1 : @deaths.where('cause != 0').size.to_d)).round(4)
+      %tr
+        %td
+          %b Ranking
+        %td
+          = @ranking == nil ? 'N/A' : @ranking.ordinalize
+  .span6
+    %h2 Experience Distribution
+    = pie_chart @exp, :height => '200px', library: {tooltip: {:valueSuffix => ' XP'}}
+
+%p
+.row-fluid
+  .span12
+    %h2
+      Server Activity
+    = line_chart @history, :width => '100%', library: {tooltip: {:valueSuffix => ' XP'}}
+
+%p
+.row-fluid
+  .span12
+    %h2
+      Objectives
+    = line_chart @objectives, :width => '100%'
+
+.row-fluid
+  .span6
+    %h2
+      Targets
+      %small Most frequent targets
+    = bar_chart @targets, :height => '300px', library: {tooltip: {:valueSuffix => ' deaths'}}
+  .span6
+    %h2
+      Nemeses
+      %small Most frequent causes of death
+    = bar_chart @enemies, :height => '300px', library: {tooltip: {:valueSuffix => ' kills'}}
+%p
+.row-fluid
+  .span12
+    %h2
+      Discussion Activity
+    = line_chart @revisions, :width => '100%', library: {tooltip: {:valueSuffix => ' posts'}}
+
+.row
+  .span3.pull-right
+    %h6.pull-right
+      .small
+        Rendered in
+        = @render
+        seconds

@@ -1,0 +1,18 @@
+production:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  pool: 30
+  host: localhost
+  database: avicus
+  username: user
+  password: pass
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  pool: 30
+  host: localhost
+  database: avicus_staging
+  username: user
+  password: pass

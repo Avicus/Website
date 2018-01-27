@@ -1,0 +1,19 @@
+%h3 Versions
+%table.table.table-bordered.table-striped
+  %tr
+    %th
+      Versions
+    %th
+      Count
+    %th
+      Share
+  - @versions.each do |version,count|
+    %tr
+      %td
+        = version
+      %td
+        = count
+      %td
+        = (100 * count.to_d / @versions_logged.to_d).round(2).to_s + '%'
+
+= bar_chart @versions

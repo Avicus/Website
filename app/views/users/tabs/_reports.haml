@@ -1,0 +1,52 @@
+%h3
+  Reports for
+  = link_to_user(@user)
+.table-responsive
+  %table.table.table-bordered.table-striped.no-margin
+    %tr
+      %th Reporter
+      %th Reported
+      %th Reason
+      %th Server
+      %th Date
+    - @reports_for.first(15).each do |report_for|
+      %tr
+        %td
+          - if report_for.creator.nil?
+            Console
+          - else
+            = link_to_user(report_for.creator)
+        %td
+          = link_to_user(report_for.user)
+        %td
+          = report_for.reason
+        %td
+          = link_to report_for.server, "/games?server=#{report_for.server}"
+        %td
+          %span{:rel => 'tooltip', :title => time_ago(report_for.created_at) + ' ago'}
+          = time_in_words report_for.created_at, true
+%br
+%h3
+  Reports by
+  = link_to_user(@user)
+.table-responsive
+  %table.table.table-bordered.table-striped.no-margin
+    %tr
+      %th Reporter
+      %th Reported
+      %th Reason
+      %th Server
+      %th Date
+    - @reports_by.first(15).each do |report_by|
+      %tr
+        %td
+          = link_to_user(report_by.creator)
+        %td
+          = link_to_user(report_by.user)
+        %td
+          = report_by.reason
+        %td
+          = link_to report_by.server, "/games?server=#{report_by.server}"
+        %td
+          %span{:rel => 'tooltip', :title => time_ago(report_by.created_at) + ' ago'}
+          = time_in_words report_by.created_at, true

@@ -1,0 +1,60 @@
+%br
+= form_for(@team, :html => {:id => 'team_edit'}) do |f|
+  - if @team.errors.any?
+    .alert.alert-danger
+      #error_explanation
+        %h4 Errors:
+        - @team.errors.full_messages.each do |msg|
+          \&bull; #{msg}
+          %br
+  %section.section.section-padded
+    .container-fluid
+      .row-fluid
+        .span3
+          = f.label :title
+          = f.text_field :title, :class => 'span12', :disabled => @editable.include?(:title) ? nil : ''
+        .span2
+          = f.label :tag
+          = f.text_field :tag, :class => 'span12', :disabled => @editable.include?(:tag) ? nil : ''
+        .span4
+          = f.label :tagline
+          = f.text_field :tagline, :class => 'span12', :disabled => @editable.include?(:tagline) ? nil : ''
+
+      / .row-fluid
+      /   .span2
+      /     = f.label :emblem
+      /     .right-inner-addon
+      /       %i.fa.fa-caret-down
+      /       = select_tag "example", options_for_select([["Blank", "blank.png"], ["Fist", "fist.png"], ["Grass", "grass.png"], ["Diamond", "diamond.png"], ["Earth", "earth.png"], ["Yuris", "yuris.png"], ["Wolf", "wolf.png"], ["Crescent", "crescent.png"], ["Anchor", "anchor.png"], ["Swords", "swords.png"], ["Claw", "claw.png"], ["Wave", "wave.png"], ["Shield", "shield.png"], ["Horse", "horse.png"], ["Hammer", "hammer.png"], ["Axe", "axe.png"],["Doge", "doge.png"]]), {:class => "example"}
+      /   .span3
+      /     %label{:rel => "tooltip", :title => "Emblems older than a week are automatically deleted."} Previous Emblems
+      /     .right-inner-addon
+      /       %i.fa.fa-caret-down
+      /       = select_tag "example", options_for_select(@team.emblems.sort_by{|k,v| v}.reverse), {:class => "previous"}
+      / .row-fluid
+      /   .span8
+      /     %br
+      /     %br
+      /     #wPaint{:style => "position:relative; width:128px; height:128px; top: -40px; background-color:#fff; border: 1px solid black", "rel-source" => @team.emblem}
+      /     %center#wPaint-img
+      /     = hidden_field_tag "emblem", :id => "emblem"
+      .row-fluid
+        .span12
+          = f.label :about
+          = f.text_area :about, :rel => 'fancy', :disabled => @editable.include?(:about) ? nil : ''
+        %br
+        .actions
+          = f.submit 'Save', :class => 'btn btn-primary'
+
+:javascript
+  $(document).ready(function () {
+    // init wPaint
+    $('#wPaint').wPaint({
+      menuOffsetLeft: -5,
+      menuOffsetTop: -50,
+      menuHandle: false,
+      menuOrientation: 'horizontal',
+      image: $("#wPaint").attr("rel-source"),
+      bg: "#FFFFFF"
+    });
+  });

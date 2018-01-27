@@ -1,0 +1,45 @@
+- if @user.details.can_view?(current_user, :ips)
+  %h3 Sessions
+  .table-responsive
+    %table.table.table-bordered.table-striped.no-margin
+      %tr
+        %th
+          IP
+          = "(#{@sessions.size})"
+        %th
+          Logins
+          = "(#{@total})"
+        %th
+          Last Login
+      - @sessions.each do |ip,info|
+        %tr
+          %td
+            - parts = ip.split("\.")
+            - parts = parts.first(parts.size - 2)
+            %a{:href => "/admin/ip/#{info[:example]}"}
+              = parts.join('.') + '.xxx.xxx'
+          %td
+            = info[:count]
+            %small
+              = "(#{info[:percent].round(2)}%)"
+          %td
+            = time_ago info[:last]
+            ago
+  %br
+- if @user.details.can_view?(current_user, :old_names)
+  %h3 Recorded Usernames
+  .table-responsive
+    %table.table.table-bordered.table-striped.no-margin
+      %tr
+        %th
+          Username
+          = "(#{@usernames.size})"
+        %th
+          First Recorded
+      - @usernames.each do |name|
+        %tr
+          %td
+            = name.username
+          %td
+            %span{:title => time_in_words(name.created_at, true), :rel => 'tooltip'}
+              = time_ago(name.created_at) + ' ago'

@@ -1,0 +1,15 @@
+- any = false
+- @posts.each do |post|
+  - if post.reply.nil?
+    - next unless post.discussion.can_view?(current_user)
+    = render 'forums/discussions/post', :discussion => post.discussion
+  - else
+    - next if post.reply.archived? || !post.reply.can_view?(current_user)
+    = render 'forums/replies/post', :reply => post.reply, :revision => post.reply.revision
+  - any = true
+  %hr
+
+- if not any
+  No forum posts found.
+- else
+  = ajax_will_paginate @posts

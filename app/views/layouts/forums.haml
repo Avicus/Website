@@ -1,0 +1,31 @@
+= inside_layout('application') do
+  %section.section-dark.main-header
+    .container-fluid
+      = content_for(:header)
+
+  %section.section-padded
+    .container-fluid
+      .row-fluid
+        .span9.pull-right
+          = yield
+        .span3.pull-left
+          = render 'forums/shared/navigation'
+
+#react_modal.modal.fade.hide
+  .modal-header
+    %button.close{'aria-hidden' => true, 'data-dismiss' => :modal, :type => :button} &times;
+    %h3 New Reaction
+  .modal-body
+    %br/
+    - common_emojis.each do |emoji|
+      = form_tag(react_path, :style => 'display: inline-block; padding: 5px; margin: 0') do
+        = hidden_field_tag :emoji, emoji.name
+        = hidden_field_tag :post_id, nil, :class => 'post-uuid'
+        = submit_tag emoji.name, :type => :image, :src => "/images/emoji/#{emoji.image_filename}", :style => 'width: 26px', :rel => 'tooltip', :title => emoji.name
+    %br/
+    %br/
+    - Emoji.all.each do |emoji|
+      = form_tag(react_path, :style => 'display: inline-block; padding: 5px; margin: 0') do
+        = hidden_field_tag :emoji, emoji.name
+        = hidden_field_tag :post_id, nil, :class => 'post-uuid'
+        = submit_tag emoji.name, :type => :image, :src => "/images/emoji/#{emoji.image_filename}", :style => 'width: 26px', :rel => 'tooltip', :title => emoji.name

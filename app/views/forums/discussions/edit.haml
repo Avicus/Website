@@ -1,0 +1,31 @@
+= content_for :title, @discussion.title
+
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span6
+        %h1 Edit Discussion
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+
+      .span9.pull-right
+        .breadcrumb
+          %li
+            %a{:href => '/forums'} Discussions
+            %span.divider /
+          %li
+            %a{:href => "#{@discussion.category_url}"}
+              = @discussion.category.name
+            %span.divider /
+          %li
+            = link_to @discussion.title, @discussion, :class => 'target'
+            %span.divider /
+          %li.active
+            Edit
+        = render 'form'
+
+      .span3.sidebar.pull-left
+        = render 'forums/shared/navigation', :forums => @forums, :categories => @categories, :active => @category.id

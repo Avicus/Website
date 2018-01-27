@@ -1,0 +1,129 @@
+= content_for :title, 'My Discussions'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span8
+        %h1.topic-title
+          My Discussions
+        %p
+          Discussions you have created.
+      .span4.pull-right
+        - if logged_in?
+          = render 'forums/shared/read_sub', :sub => false
+
+        %a.btn.btn-warning.pull-right.open-search{:style => 'margin-top: 10px'}
+          Search
+          &nbsp;
+          %i.fa.fa-caret-down
+
+:javascript
+  $(".open-search").click(function () {
+    $("#search").slideToggle(200);
+    $("#author").focus();
+  })
+
+%section.section.section-padded
+  .container-fluid
+    .row-fluid
+      .span9.pull-right
+        = render 'forums/shared/search'
+
+        .breadcrumb
+          %li.active
+            My Discussions
+        .table-responsive
+          %table.table.table-striped
+            %thead
+              %tr
+                - if logged_in?
+                  %th{:style => 'width: 20px;'}
+                %th Title
+                %th{:style => 'width: 100px;'} Activity
+                %th{:style => 'width: 205px; text-align: right'} Latest Post
+            %tbody
+              - @discussions.each do |discussion|
+                - if discussion == nil
+                  - next
+                - if !discussion.can_execute_state?(current_user, :view)
+                  - next
+
+                %tr
+                  - if logged_in?
+                    %td
+                      - unread = discussion.get_unread(current_user)
+                      - if unread.size > 0
+                        %a.label.label-warning.pull-right{:href => unread.first.link, :style => 'margin-top: 50%', :rel => 'tooltip', :title => "#{unread.size} unread posts"}
+                          = unread.size
+                  %td
+                    = link_to discussion.title, discussion, :style => discussion.sticky? ? 'font-weight: bold' : ''
+                    &nbsp;
+                    %small{:style => 'font-size: 12px'}
+                      - if discussion.sticky?
+                        %i.fa.fa-star{:title => 'Stickied'} &nbsp;
+                      - if discussion.archived?
+                        %i.fa.fa-times{:title => 'Archived'} &nbsp;
+                      - if discussion.locked?
+                        %i.fa.fa-lock{:title => 'Locked'}
+                    %br
+                    %small.post-extras
+                      %i.fa.fa-pencil
+                      = link_to_user(discussion.user)
+                      %i.fa.fa-clock-o
+                      %a{:href => discussion_path(discussion), :rel => 'tooltip', :title => time_in_words(discussion.created_at, true)}
+                        = time_ago discussion.created_at
+                        ago
+                      %i.fa.fa-folder-open
+                      %a{:href => discussion.category_url}
+                        = discussion.category.forum.name + " \u27A4 " + discussion.category.name
+                      - if discussion.revision.tag.presence
+                        %i.fa.fa-tag
+                        %a{:href => "/forums/categories/#{discussion.category.id}?tag=#{discussion.revision.tag}"}
+                          = discussion.revision.tag
+                  %td
+                    %b
+                      = discussion.public_replies(current_user).size
+                    = 'reply'.pluralize(discussion.public_replies(current_user).size)
+                    %br
+                    %small
+                      %b
+                        = discussion.views
+                      = 'view'.pluralize(discussion.views)
+                  %td
+                    - latest = discussion.public_replies(current_user).last
+                    - if discussion.public_replies(current_user).size > 0 && !latest.nil? && !latest.user.nil?
+                      %div{:style => 'position:realtive; text-align: right'}
+                        .pull-right{:style => 'position:relative; margin-left: 5px; margin-top: 4px'}
+                          = link_to user_path(latest.user) do
+                            %img.img-rounded{:src => latest.user.avatar(37)}
+                        = link_to_user(latest.user)
+                        .post-extras
+                          %a{:href => find_reply_path(latest), :rel => 'tooltip', :title => time_in_words(latest.created_at, true)}
+                            = time_ago latest.created_at
+                            ago
+                    - else
+                      %div{:style => 'position:realtive; text-align: right'}
+                        .pull-right{:style => 'position:relative; margin-left: 5px; margin-top: 4px'}
+                          = link_to user_path(discussion.user) do
+                            %img.img-rounded{:src => discussion.user.avatar(37)}
+                        = link_to_user(discussion.user)
+                        .post-extras
+                          %a{:href => discussion_path(discussion), :rel => 'tooltip', :title => time_in_words(discussion.created_at, true)}
+                            = time_ago discussion.created_at
+                            ago
+        - if @discussions.size == 0
+          %p.text-center There are no discussions to display.
+        = will_paginate @discussions
+
+      .span3.pull-left
+        = render 'forums/shared/navigation', :forums => @forums, :categories => @categories, :active => 'my_discussions'
+
+:css
+  td {
+    line-height: 21px !important;
+  }
+
+:javascript
+  $('.topic-title').each(function() {
+    $(this).html($('.sidebar .active a .title').html());
+  });

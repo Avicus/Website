@@ -1,0 +1,27 @@
+= content_for :title, 'Server Management'
+
+= render 'admin/heads/index', subject: 'Server'
+
+
+%section.section-padded
+  .container-fluid
+    .table-responsive
+      %table.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th Name
+            %th Port
+            %th Permission
+            %th
+        %tbody
+          - @servers.each do |server|
+            %tr
+              %td
+                = server.name
+              %td
+                = server.port
+              %td
+                = server.permission
+              %td
+                = link_to 'Show', [:admin, server], :class => 'btn btn-mini'
+                = link_to 'Destroy', [:admin, server], method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger'

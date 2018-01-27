@@ -1,0 +1,58 @@
+- if (defined? revision) == nil
+  - revision = discussion.revision
+
+
+.row-fluid
+  .span1{:style => 'padding-top: 3px; margin-right: 5px'}
+    %a{:href => user_path(discussion.user)}
+      %img.round-mini{:src => revision.discussion.user.avatar(45)}
+
+  .span11.no-margin
+    %b
+      = raw link_to_user(discussion.user)
+      = render 'forums/shared/user', :user => discussion.user
+    .post-extras
+      %i.fa.fa-calendar
+      %a{:href => discussion_path(revision.discussion), :rel => 'tooltip', :title => time_ago(revision.created_at) + ' ago'}
+        = time_in_words(revision.created_at, true)
+
+      - if discussion.can_execute_state?(current_user, :edit)
+        %i.fa.fa-pencil
+        = link_to 'Edit', edit_discussion_path(revision.discussion)
+
+      - if discussion.can_view_revisions?(current_user)
+        %i.fa.fa-edit
+        = link_to (pluralize discussion.revisions.length - 1, 'revision'), "/forums/discussions/#{discussion.uuid}/revisions"
+
+      %i.fa.fa-folder-open
+      %a{:href => "#{revision.category_url}"}
+        = revision.category.name
+
+      - if revision.tag.presence
+        %i.fa.fa-tag
+        %a{:href => "/forums/category/#{discussion.category.id}&tag=#{revision.tag}"}
+          = revision.tag
+
+      - if revision.stickied == 1
+        %i.fa.fa-star
+        Stickied
+
+      - if revision.archived?
+        %i.fa.fa-times
+        Archived
+
+      - if revision.locked?
+        %i.fa.fa-lock
+        Locked
+
+.row-fluid{:style => 'padding-top: 15px'}
+  .span12
+    - taggedbody = revision.body
+    - revision.body.scan(/{tag=(.*?)}/).first(100).each do |t|
+      - uuid = t.first
+      - search = User.where(:uuid => uuid)
+      - unless search.nil?
+        - user = search.first
+        - unless user.nil?
+          - taggedbody.gsub!("{tag=#{uuid}}", "#{link_avatar_to_user(user, 16, :class => 'img-rounded')} #{link_to_user(user)}")
+    = raw html_safe taggedbody

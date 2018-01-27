@@ -1,0 +1,33 @@
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1 Revisions on Reply
+        %p
+          = link_to 'Back to Discussion', discussion_path(@reply.discussion)
+
+%section.section.section-padded
+  .container-fluid
+    .row-fluid
+      .span9.pull-right
+
+        - @reply.revisions.each do |revision|
+          .row-fluid
+            .span12
+              %small.pull-right
+                - if revision == @reply.revision
+                  %span{:rel => 'tooltip', :title => 'Current revision'}
+                    %i.fa.fa-star
+                  &nbsp;
+                - if revision == @reply.revisions.last
+                  %span{:rel => 'tooltip', :title => 'Original revision'}
+                    %i.fa.fa-star-o
+                  &nbsp;
+                %span{:rel => 'tooltip', :title => "Revision made by #{revision.user.name}"}
+                  %i.fa.fa-pencil
+                  = link_to_user(revision.user)
+          = render 'post', :revision => revision, :reply => @reply
+          %hr
+
+      .span3.sidebar.pull-left
+        = render 'forums/shared/navigation', :forums => @forums, :categories => @categories, :active => @category.id

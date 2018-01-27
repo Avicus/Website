@@ -1,0 +1,16 @@
+= content_for :title, 'Server Group Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Server Group Management
+      .pull-right
+        = link_to 'Back', admin_server_groups_path, :class => 'btn btn-info'
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span5
+        %br
+        %br
+        = render 'form'

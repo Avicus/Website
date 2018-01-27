@@ -1,0 +1,62 @@
+%h2.text-center{:style => "color: #{rank.html_color}"}
+  = rank.name.pluralize(rank.members.size)
+  %small{class: "small-#{rank.name.downcase.gsub(' ', '_')}"}
+    = "#{rank.members.size}"
+%div.divider{style: "border-top: 2px double #{rank.html_color}"}
+%ul.thumbnails
+  - rank.memberships.each do |mem|
+    - user = mem.member
+    %li{:rel => 'tooltip', :title => user.name}
+      %h3.text-center{class: "role-#{rank.name.downcase.gsub(' ', '_')}"}= (mem.role.nil? || mem.role.empty?) ? rank.name : mem.role
+      %a.user{:href => user.path}
+        %img.center.img-rounded{:src => user.avatar(160), :style => 'width: 100px'}
+        %h2.text-center{class: "social-links-#{rank.name.downcase.gsub(' ', '_')}"}
+          - unless user.details.twitch.present? || user.details.github.present? || user.details.twitter.present?
+            %i.fa.fa-fw
+          - if user.details.twitch.present?
+            %a{:title => 'Twitch', :href => "http://twitch.tv/#{user.details.twitch}", :target => '_blank'}
+              %i.fa.fa-microphone
+          - if user.details.github.present?
+            %a{:title => 'GitHub', :href => "https://github.com/#{user.details.github}", :target => '_blank'}
+              %i.fa.fa-github
+          - if user.details.twitter.present?
+            %a{:title => 'Twitter', :href => "http://twitter.com/#{user.details.twitter}", :target => '_blank'}
+              %i.fa.fa-twitter
+
+:sass
+  .user img:hover
+    -webkit-box-shadow: 0 0 4px 0 #04c
+    -moz-box-shadow: 0 0 4px 0 #04c
+    box-shadow: 0 0 4px 0 #04c
+
+  .divider
+    width: 100%
+    height: 0
+    margin-top: -16px
+    margin-bottom: 6px
+    font-size: 0
+
+  .small-#{rank.name.downcase.gsub(' ', '_')}
+    color: lighten(#{rank.html_color}, 25%)
+
+  a
+    color: inherit
+    text-decoration: inherit
+
+  .role-#{rank.name.downcase.gsub(' ', '_')}
+    color: darken(#{rank.html_color}, 25%)
+    font-size: small
+    border-bottom: 2px double darken(#{rank.html_color}, 25%)
+
+  h2.social-links-#{rank.name.downcase.gsub(' ', '_')}
+    margin-bottom: 0
+    color: darken(#{rank.html_color}, 15%)
+
+  ul
+    margin-bottom: 0
+
+:css
+  img.center {
+    display: block;
+    margin: 0 auto;
+  }

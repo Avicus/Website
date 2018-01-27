@@ -1,0 +1,29 @@
+= content_for :title, 'Appeals'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span1
+        %a{:href => @punishment.user.path}
+          %img.img-rounded{:src => avatar_url(@punishment.user, 68), :style => 'margin-top: 5px'}
+      .span11{:style => 'margin-left: 15px'}
+        %h1
+          Appealing Punishment for
+          = link_to_user(@punishment.user)
+        %p
+          Occurred
+          = time_ago(@punishment.date)
+          ago
+
+
+%section.section-padded
+  .container-fluid
+    = form_tag appeals_path, :method => 'post' do
+      = hidden_field_tag(:punishment_id, @punishment.id)
+
+      .field
+        %label{:for => 'text'} Why are you appealing?
+        = text_area_tag :text, nil, :style => 'width: 100%;', :placeholder => 'Please include as much information as possible - Vague appeals have a very low chance of being considered.'
+
+      .actions
+        = submit_tag 'Submit Appeal', :class => 'btn btn-success'

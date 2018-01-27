@@ -1,0 +1,22 @@
+= content_for :title, 'Server Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Server Management
+      .pull-right
+        = link_to 'Back', admin_servers_path, :class => 'btn btn-info'
+
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+      .span6
+        = render 'form'
+      .span6
+        %p
+          %b Redis Data:
+          %pre.code
+            = preserve do
+              :escaped
+                #{JSON.pretty_generate(@server.status)}

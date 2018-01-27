@@ -1,0 +1,44 @@
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1
+          Tournaments
+
+%section.section
+  .container-fluid
+    - if @tournaments.size == 0
+      %br
+      .row-fluid
+        .span12
+          .page-header{:style => 'margin-top: 0'}
+            %h2 Coming Soon!
+      .row-fluid
+        .span1{:style => 'width: 100px'}
+          %img.img-polaroid{:src => '/assets/icons/pvp2.png'}
+
+        .span10
+          %p
+            Currently we are working on setting up a tournament. For now, you have a few options while you wait!
+
+            %ul
+              %li Watch the forums to see progress towards the first tournament.
+              %li Create a team and practice together using our scrimmage servers.
+              %li Play on the public servers!
+
+    - @tournaments.each do |tournament|
+      - if tournament.header == 1
+        .page-header
+          %h2
+            = tournament.name
+            %a.btn.btn-link{:href => tournament_path(tournament)}
+              %i.fa.fa-external-link
+              View
+      - else
+        %br
+      %p
+        = raw html_safe tournament.about
+      %br
+
+    = will_paginate @tournaments
+    %br

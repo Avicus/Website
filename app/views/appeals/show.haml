@@ -1,0 +1,71 @@
+= content_for :title, 'Appeals'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span1
+        %a{:href => @appeal.punishment.user.path}
+          %img.img-rounded{:src => avatar_url(@appeal.punishment.user, 68), :style => 'margin-top: 5px'}
+      .span11{:style => 'margin-left: 15px; margin-top:10px;'}
+        %h1
+          Viewing appeal from
+          = link_to_user(@appeal.actions.first.user)
+
+%section.section-padded
+  .container-fluid
+    %ul.nav.nav-tabs
+      %li.active
+        %a.edit{'data-toggle' => 'tab', :href => '#history'} Appeal History
+      %li
+        %a.preview{'data-toggle' => 'tab', :href => '#punishments'} Other Punishments
+    .tab-content
+      .tab-pane.active{:id => 'history', :role => 'tabpanel'}
+        %h2 Punishment
+        = render 'shared/punishments', :punishments => Array(@appeal.punishment)
+        - if @appeal.can_execute?(current_user, :ping_staff)
+          %h2 Ping Staff
+          .input-append
+            = text_field_tag 'staff', @appeal.punishment.staff.nil? ? '' : @appeal.punishment.staff.username, :placeholder => 'Staff', :class => 'typeahead', :autocomplete => 'off', :style => 'margin-bottom: 0;'
+            = submit_tag 'Ping staff »', :onclick => "location.href = '#{appeal_path(@appeal)}?alert=' + document.getElementById('staff').value; return false;", :class => 'btn btn-success'
+        %br
+        %br
+        %h2 Appeal History
+        - shownstaffonlyalert = false
+        - @comments.each do |comment|
+          - next if comment.user.nil?
+          - staffonly = comment.action_text == 'left a staff note on'
+          - next if staffonly && !@appeal.can_execute?(current_user, :staff_note)
+          .row-fluid{:style => ('background:rgba(244, 168, 104, 0.3); padding: 1em; width:95%;' if staffonly)}
+            .span1
+              %a{:href => comment.user.path}
+                %img.img-rounded{:src => avatar_url(comment.user, 68), :style => 'margin-top: 5px'}
+            .span11
+              %h4
+                = link_to_user(comment.user)
+                %span.label.label-pill{:class => comment.action_style_class}= comment.action_text
+                the appeal.
+                %small
+                  = time_in_words(comment.created_at, true)
+              - unless comment.text.nil? || comment.text == ''
+                - hrstyle = 'margin-top: 5px; margin-bottom: 5px;'
+                - if staffonly
+                  - hrstyle = hrstyle + 'border-color: rgba(244, 168, 104, 0.35) !important;'
+                %hr{style: "#{hrstyle}"}
+                %blockquote{style: ('border-left: 5px solid grey;' if staffonly)}= simple_format(comment.text).gsub(URI.regexp(['http', 'https']), '<a href="\0">\0</a>').html_safe
+            - if staffonly && !shownstaffonlyalert
+              %small{style: 'color: gray'} (only staff can see these)
+              - shownstaffonlyalert = true
+          %br
+        %hr
+        - if @appeal.can_respond(current_user)
+          %h2 Respond to appeal
+          = render 'appeals/form'
+      .tab-pane{:id => 'punishments', :role => 'tabpanel'}
+        %h2
+          = "Other punishments for #{@appeal.actions.first.user.username}"
+        = render 'shared/punishments', :punishments => @appeal.actions.first.user.punishments.where("id != #{@appeal.punishment.id}").order('date DESC').paginate(:page => params[:page])
+
+:javascript
+  $(".btn-group-vertical button").click(function () {
+    $("#action_val").val($(this).text().toLowerCase());
+  });

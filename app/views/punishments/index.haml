@@ -1,0 +1,14 @@
+= content_for :title, 'Punishments'
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span8
+        %h1 Punishments
+        %p All punishments dealt by staff members.
+      .span4{style: 'margin-top:1em;'}
+        .input-append
+          = text_field_tag 'staff', nil, :placeholder => 'Staff', :class => 'typeahead', :autocomplete => 'off', :style => 'margin-bottom: 0;'
+          = submit_tag 'Filter by staff »', :onclick => "location.href = '#{punishments_url}?staff=' + document.getElementById('staff').value; return false;", :class => 'btn btn-warning'
+%section.section.section-padded.section-last
+  .container-fluid
+    = render 'shared/punishments', :punishments => @punishments

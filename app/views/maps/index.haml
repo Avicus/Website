@@ -1,0 +1,45 @@
+= content_for :title,  'Maps'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span9
+        .row-fluid
+          .span8.no-margin
+            %h1
+              Maps
+            %p
+              The 
+              = ORG::NAME 
+              currently has
+              = @total
+              loaded maps.
+      .span3.pull-right
+        %select{'onchange': 'location = this.options[this.selectedIndex].value;'}
+          = options_for_select(@category_select)
+
+%section.section-padded
+  .container-fluid
+    - @maps.each_slice(4) do |slice|
+      .row-fluid
+        - slice.each do |map|
+          .span3
+            .well
+              %center
+                %img{src: map.png_path}
+                %a{href: '/maps/map/' + map.slug}
+                  = map.name
+                %i
+                  = "(#{map.version})"
+              %hr{style: 'margin: 0'}
+              .row-fluid
+                .span3
+                  %strong
+                    = 'Author'.pluralize(map.authors.keys.size) + ':'
+                .span9.map-authors
+                  - map.authors.each do |uuid, cont|
+                    - u = User.find_by_uuid(uuid)
+                    = u.nil? ? 'N/A' : link_to_user(u)
+                    = raw cont
+                    %br
+    = will_paginate(@maps)

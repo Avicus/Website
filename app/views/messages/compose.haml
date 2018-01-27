@@ -1,0 +1,37 @@
+- content_for :title, 'Compose a Message'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Compose a Message
+      %small Send a private message to a player or group of players.
+
+%br
+%section
+  .container-fluid
+    = form_tag create_message_path(@message) do
+      - if @reply_to.present?
+        %h1
+          %small
+            Replying to
+            = link_to_user(User.find_by_id(@reply_to))
+        = hidden_field_tag :recipient, @reply_to.id
+      - else
+        = text_field_tag :recipients
+      %br
+      = text_area_tag :content, '', :style => 'width: 100%; height: 366px;'
+      %br
+      = submit_tag 'Send Message', :class => 'btn btn-primary'
+%br
+
+:javascript
+  $(document).ready(function () {
+    $("#recipients").tokenInput("/messages/to-search/", {
+      minChars: 2,
+      hintText: "Start typing a user's name to begin searching",
+      noResultsText: "Welp, we couldn't find a user that matched that name",
+      preventDuplicates: 2,
+      theme: "facebook",
+      tokenLimit: #{@multi? 'null' : 1}
+    });
+  });

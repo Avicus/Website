@@ -1,0 +1,81 @@
+- show_archive = true if show_archive.nil?
+= form_for @discussion do |f|
+  - if @revision.errors.any?
+    .alert.alert-danger
+      #error_explanation
+        %h4 Errors:
+        %ul
+          - @revision.errors.full_messages.each do |msg|
+            %li #{msg}
+  %article.post.row-fluid
+    .span12
+
+      %ul.nav.nav-tabs
+        %li.active
+          %a.edit{'data-toggle' => 'tab', :href => '#edit'} Edit
+        %li
+          %a.preview{'data-toggle' => 'tab', :href => '#preview'} Preview
+  %br
+  %article.post.row-fluid
+    #edit.span12
+      = fields_for @revision do |r|
+        = r.text_field :title, :value => @discussion.revision == nil ? @revision.title : @discussion.revision.title, :class => 'update', :style  => 'width: 500px'
+
+        .row-fluid
+          .span12
+            - body = @discussion.revision == nil ? @revision.body : @discussion.revision.body
+            - unless body.nil?
+              - body.scan(/{tag=(.*?)}/).each do |t|
+                - uuid = t.first
+                - user = User.where(:uuid => uuid).first
+                - next if user.nil?
+                - body.gsub!("{tag=#{uuid}}", "{tag=#{user.username}}")
+            = r.text_area :body, :value => body, :rel => 'fancy', :style => 'height: 400px'
+
+        .row-fluid
+          .span4
+            = r.select :category_id, options_for_select(@options, @category.id), :class => 'select-field'
+          - if @category.tags.presence
+            - if @category.can_execute?(current_user, @discussion.user == nil ? current_user : @discussion.user, :tag)
+              .span2
+                = r.select :tag, (',' + @category.tags).split(',') { |value| [ value, value ] }, :selected => @discussion.revision == nil ? @revision.tag : @discussion.revision.tag
+          - if @category.can_execute?(current_user, @discussion.user == nil ? current_user : @discussion.user, :archive) && show_archive != false
+            .span2
+              %label.checkbox
+                = r.check_box :archived, :checked => @discussion.revision == nil ? @revision.archived? : @discussion.revision.archived?
+                Archive
+          - if @category.can_execute?(current_user, @discussion.user == nil ? current_user : @discussion.user, :sticky)
+            .span2
+              %label.checkbox
+                = r.check_box :stickied, :checked => @discussion.revision == nil ? @revision.stickied == 1 : @discussion.revision.stickied == 1
+                Sticky
+          - if @category.can_execute?(current_user, @discussion.user == nil ? current_user : @discussion.user, :lock)
+            .span2
+              %label.checkbox
+                = r.check_box :locked, :checked => @discussion.revision == nil ? @revision.locked == 1 : @discussion.revision.locked == 1
+                Lock
+
+      - if params[:action] != 'new'
+        = f.submit 'Update Discussion', :class => 'btn btn-primary'
+      - else
+        = f.submit 'Post Discussion', :class => 'btn btn-primary'
+  %article.post.row-fluid
+    #preview.span12
+
+#loading{:style => 'display: none'}
+  %h6.text-center Loading preview, please wait...
+
+:javascript
+    $(".edit").click(function() {
+      $("#edit").show();
+      $("#preview").hide();
+    });
+    $(".preview").click(function() {
+      $("#preview").html($("#loading").html());
+      var html = $("#revision_body").val();
+      $.post("/forums/discussions/preview", {"body": html}, function(data) {
+        $("#preview").html(data);
+      });
+      $("#preview").show();
+      $("#edit").hide();
+    });

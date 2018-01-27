@@ -1,0 +1,35 @@
+= content_for :title, 'Achievements Management'
+
+%section.section-dark.main-header
+  .container-fluid
+    %h1
+      Achievements Management
+      .pull-right
+        %a{:class => 'btn btn-primary', :href => admin_path} Back
+        = link_to 'New Achievement', admin_achievements_path + '/new', :class => 'btn btn-success'
+%section.section-padded
+  .container-fluid
+    .table-responsive
+      %table.table.table-striped.table-bordered
+        %thead
+          %tr
+            %th Name
+            %th Slug
+            %th Description
+            %th Users
+            %th
+        %tbody
+          - @achievements.each do |achievement|
+            %tr
+              %td{style: 'width: 20%'}
+                = link_to achievement.name, [:admin, achievement]
+              %td{style: 'width: 20%'}
+                = achievement.slug
+              %td
+                = achievement.description
+              %td{style: 'width: 5%'}
+                = AchievementReceiver.where(achievement: achievement).count
+              %td{style: 'width: 5%'}
+                = link_to 'Destroy', [:admin, achievement], method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-mini btn-danger'
+        %br
+        = will_paginate @achievements

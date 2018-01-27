@@ -1,0 +1,148 @@
+= content_for :title, 'Edit Profile'
+
+= render 'banner'
+
+%section.section.section-padded
+  .container-fluid
+    .row-fluid
+      .span12
+        = form_for @user_details, :url => {:id => @user.id, :action => 'update'}, :html => {:multipart => true} do |f|
+          - if @user_details.errors.any?
+            .alert.alert-danger
+              #error_explanation
+                %h4 Errors:
+                - @user_details.errors.full_messages.each do |msg|
+                  \&bull; #{msg}
+                  %br
+
+          .row-fluid
+            .span2
+              = f.label :avatar, 'Profile Picture'
+              %img.img-rounded{:src => @user.avatar(110)}
+              %p
+              = f.select :avatar,  options_for_select((@user.details.email_status == 0 ? ['Minecraft'] : %w(Minecraft Gravatar)), @user_details.avatar), :disabled => @editable.include?(:avatar) ? nil : ''
+
+              %i In order to use Gravatar as your profile picture, you must have a confirmed email.
+            .span10
+              .pull-right
+                %span{:rel => 'tooltip', :title => 'Tags: div, span, br, img, a, b, i, pre, blockquote, center, code, hr, ul, ol, li, h1, h2, h3, h4, small'} You may use HTML to aid with formatting your page.
+              .field
+                = f.label :about
+                = f.text_area :about, :class => 'span12', :style => 'height: 280px', :disabled => @editable.include?(:about) ? nil : ''
+          .row-fluid
+            .span2
+              = f.label :steam, :rel => 'tooltip', :title => 'Provide your Steam ID.'
+              = f.text_field :steam, :class => 'span12', :disabled => @editable.include?(:steam) ? nil : ''
+            .span2
+              = f.label :skype, :rel => 'tooltip', :title => 'Provide your Skype username.'
+              = f.text_field :skype, :class => 'span12', :disabled => @editable.include?(:skype) ? nil : ''
+            .span2
+              = f.label :facebook, :rel => 'tooltip', :title => 'Provide your Facebook URL: http://facebook.com/<Name>'
+              = f.text_field :facebook, :class => 'span12', :disabled => @editable.include?(:facebook) ? nil : ''
+            .span2
+              = f.label :twitch, :rel => 'tooltip', :title => 'Provide your Twitch channel name'
+              = f.text_field :twitch, :class => 'span12', :disabled => @editable.include?(:twitch) ? nil : ''
+            .span2
+              = f.label :twitter, :rel => 'tooltip', :title => 'Provide your Twitter username'
+              = f.text_field :twitter, :class => 'span12', :disabled => @editable.include?(:twitter) ? nil : ''
+            .span2
+              = f.label :github, :rel => 'tooltip', :title => 'Provide your Github username.'
+              = f.text_field :github, :class => 'span12', :disabled => @editable.include?(:github) ? nil : ''
+          %br
+          .row-fluid
+            .span2
+              = f.label :email
+              = f.text_field :email, :class => 'span12', :disabled => @editable.include?(:email) ? nil : ''
+            .span2
+              = f.label :instagram, :rel => 'tooltip', :title => 'Provide your Instagram username.'
+              = f.text_field :instagram, :class => 'span12', :disabled => @editable.include?(:instagram) ? nil : ''
+            .span2
+              = f.label :gender
+              = f.select :gender, ['Male', 'Female', 'Other', ['Do not display', '']], {}, {:class => 'span12', :disabled => @editable.include?(:gender) ? nil : ''}
+            .span3
+              = f.label :interests
+              = f.text_field :interests, :class => 'span12', :disabled => @editable.include?(:interests) ? nil : ''
+            .span3
+              = f.label :cover_art
+              = f.select :cover_art, options_for_select([%w(Trees /assets/profiles/trees.jpg),['Sand Village', '/assets/profiles/sand_village.jpg'],%w(Bridge /assets/profiles/bridge.jpg), ['Dark Castle', '/assets/profiles/castle.jpg'], %w(Swamp /assets/profiles/swamp.jpg), %w(Pond /assets/profiles/pond.jpg), %w(City /assets/profiles/city.jpg), %w(Volcano /assets/profiles/volcano.jpg), %w(Jungle /assets/profiles/jungle.jpg), ['Custom']], @cover_art.include?('upload') ? 'Custom' : @cover_art), {}, {:class => 'span12 update-cover-art', :disabled => @editable.include?(:cover_art) ? nil : ''}
+              %br
+              .upload
+                = label_tag :upload_art, 'Upload Cover Art'
+                = file_field_tag :upload_art
+
+          %hr
+            .row-fluid
+              %h2 Custom Badge
+              .span2
+                = f.label :custom_badge_icon
+                = f.select :custom_badge_icon, @icons, :class => 'span12', :disabled => @editable.include?(:custom_badge_icon) ? nil : ''
+              .span2
+                = f.label :custom_badge_color
+                = f.select :custom_badge_color, @colors, :class => 'span12', :disabled => @editable.include?(:custom_badge_color) ? nil : ''
+          %br
+          .actions
+            = link_to 'Back', @user.path, :class => 'btn btn-default'
+            = f.submit 'Save', :class => 'btn btn-primary'
+
+        %hr
+        - if @user == current_user
+          - text = (@user.api_key.nil? ? '' : 'Re-') + 'Generate API Token'
+          .row-fluid
+            .span3
+              %h3.text-center{style: 'color:orange'} COMING SOON
+            .span2
+              %a.btn.btn-primary{href: generate_api_token_path}= text
+            .span4
+              %label API KEY
+              %input{onclick: 'this.focus();this.select()', style: 'width: 100%', readonly: true, value: @user.api_key}
+        - else
+          .alert.alert-warning You are not allowed to view the API keys of other users.
+        %hr
+        = form_tag "/users/#{CGI.escape(@user.name)}/update?id=#{@user.id}", :method => :patch do
+          .row-fluid
+            .span2
+              = label_tag :old, 'Old Password'
+              = password_field_tag :old, '', :class => 'span12'
+            .span2
+              = label_tag :password, 'New Password'
+              = password_field_tag :password, '', :class => 'span12'
+            .span2
+              = label_tag :confirm, 'Confirm New Password'
+              = password_field_tag :confirm, '', :class => 'span12'
+          = submit_tag 'Update Password', :class => 'btn btn-primary'
+
+:javascript
+  var _URL = window.URL || window.webkitURL;
+
+  $('#upload_art').bind('change', function() {
+    var field = $(this);
+    var file = this.files[0];
+    var size = file.size;
+
+    var image = new Image();
+    image.onload = function() {
+      if (this.width < 1190 || this.width > 1210 || this.height < 240 || this.height > 260) {
+        field.replaceWith(field.val('').clone(true));
+        alert("Cover art images must be exactly 1200px by 250px.")
+      }
+    };
+    image.src = _URL.createObjectURL(file);
+
+    if (size > 1000000) {
+      $(this).replaceWith($(this).val('').clone(true));
+      alert("Cover art images must not exceed 1 MB in size.");
+    }
+  });
+
+  function displayUpload() {
+    if ($("#user_detail_cover_art").val() == "Custom")
+      $(".upload").show();
+    else
+      $(".upload").hide();
+  }
+
+  displayUpload();
+
+  $("#user_detail_cover_art").change(function() {
+    displayUpload();
+  });

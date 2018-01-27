@@ -1,0 +1,12 @@
+- if online_users.include?(user)
+  .online
+- if user.is_staff
+  %small{:rel => 'tooltip', :title => 'This user is a staff member.'}
+    %i.fa.fa-shield
+= raw user.custom_badge
+- ranks = user.cached(:ranks).sort_by {|rank| rank.priority}.reverse.uniq
+- ranks.each do |rank|
+  - if rank.has_badge?
+    &nbsp;
+    %span.label{:style => "background-color: #{rank.badge_color}; font-size: 11.8px; color: #{rank.badge_text_color}"}
+      = rank.name

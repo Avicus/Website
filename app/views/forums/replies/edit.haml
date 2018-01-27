@@ -1,0 +1,23 @@
+= content_for :title, 'Edit Reply'
+
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span6
+        %h1 Edit Reply
+        %p
+          %a{:href => find_reply_path(@reply)} Back to Discussion
+
+%section.section.section-padded
+  .container-fluid
+    .row-fluid
+
+      .span9.pull-right
+        - if @reply.reply.presence
+          = render 'forums/replies/post', :reply => @reply.reply
+          %hr
+        = render 'forums/replies/form', :reply => @reply, :revision => @reply.revision, :discussion => @discussion
+
+      .span3.sidebar.pull-left
+        = render 'forums/shared/navigation', :forums => @forums, :categories => @categories, :active => @category.id

@@ -1,0 +1,71 @@
+
+
+.ribbon {
+  color: #fff;
+  position: relative;
+  background: rgb(0, 164, 239);
+  border: 1px solid rgba(0,0,0,.3);
+  box-shadow: 0px 1px 3px rgba(0,0,0,.2);
+  padding: 15px 10px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  clear: both;
+  font-size: 26px;
+  text-align: center;
+  width: 100%;
+  margin-left: -10px;
+  font-weight: 900;
+}
+
+.ribbon a {
+  color: #fff;
+}
+
+.ribbon a:hover {
+  color: #fff;
+  text-decoration: none !important;
+}
+
+.ribbon.ribbon-green {
+  background: rgb(85, 186, 79);
+}
+.ribbon.ribbon-green::before {
+  border-right: 10px solid rgb(47, 121, 42);
+}
+.ribbon.ribbon-green::after {
+  border-left: 10px solid rgb(47, 121, 42);
+}
+
+.ribbon.ribbon-red {
+  background: rgb(128, 24, 4);
+}
+.ribbon.ribbon-red::before {
+  border-right: 10px solid rgb(87, 6, 6);
+}
+.ribbon.ribbon-red::after {
+  border-left: 10px solid rgb(87, 6, 6);
+}
+
+.ribbon::before {
+  display: block;
+  width: 10px;
+  height: 0px;
+  position: absolute;
+  bottom: -10px;
+  left: -11px;
+  content: "";
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid rgb(0, 80, 116);
+}
+
+.ribbon::after {
+  display: block;
+  width: 10px;
+  height: 0px;
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  content: "";
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid rgb(0, 80, 116);
+}

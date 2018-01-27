@@ -1,0 +1,7 @@
+.span6
+  %h2 XP (By Season)
+  = column_chart @season_data, height: '233px'
+
+.span6
+  %h2 XP (By Month)
+  = line_chart @xp_over_time, height: '233px'

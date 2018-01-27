@@ -1,0 +1,54 @@
+= content_for :title, 'Live'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span8
+        %h1 Live
+        %p Watch Server Events just as they happen!
+
+      .span4{style: 'margin-top:1em;'}
+        - if Livestream.can_execute?(current_user, :create)
+          = form_tag '/live', :method => 'post', :class => 'form-inline' do
+            .input-append
+              = text_field_tag 'livestream[channel]', nil, :placeholder => 'Channel Name', :style => 'margin-bottom: 0;'
+              = submit_tag 'Add Channel »', :class => 'btn btn-success'
+
+%section
+  .container-fluid
+    - if Livestream.all.size > 0
+      - if @online.size > 0
+        %h2{style: 'color: green; margin: 0'} ONLINE Streams
+        %hr{style: 'margin: 0'}
+        - @online.each_slice(2) do |cg|
+          .row-fluid
+            - cg.each do |c|
+              .span6
+                %iframe{src: "https://player.twitch.tv/?muted=true&channel=#{c.channel}", frameborder: '0', width:'90%', height: '300', style:'padding-right:5%; padding-bottom: 4px;', scrolling: 'no', allowfullscreen: 'true'}
+                .text-center.center-block{style: 'padding-bottom:10%'}
+                  %h3 #{c.channel}'s Channel
+                  = link_to 'Visit »', "https://twitch.tv/#{c.channel}", :class => 'btn btn-primary btn-mini'
+
+                  - if Livestream.can_execute?(current_user, :destroy)
+                    = link_to 'x', c.path , method: :delete, data: { confirm: 'Are you sure you want to delete this channel?' }, :class => 'btn btn-danger btn-mini'
+                %iframe{src: "https://www.twitch.tv/#{c.channel}/chat", frameborder: '0', height: '300', scrolling: 'no', width: '90%'}
+      %br
+      // Streams are offline AND none are online (offline are hidden if any online because of browser lag)
+      - if @offline.size > 0 && @online.empty?
+        %h2{style: 'color: red; margin: 0'} OFFLINE Streams
+        %hr{style: 'margin: 0'}
+        - @offline.each_slice(2) do |cg|
+          .row-fluid
+            - cg.each do |c|
+              .span6
+                %iframe{src: "https://player.twitch.tv/?muted=true&channel=#{c.channel}", frameborder: '0', width:'90%', height: '300', style:'padding:10%; padding-left:5%; padding-bottom: 4px;', scrolling: 'no', allowfullscreen: 'true'}
+                .text-center.center-block{style: 'padding-bottom:10%'}
+                  %h3 #{c.channel}'s Channel
+                  = link_to 'Visit »', "https://twitch.tv/#{c.channel}", :class => 'btn btn-primary btn-mini'
+
+                  - if Livestream.can_execute?(current_user, :destroy)
+                    = link_to 'x', c.path , method: :delete, data: { confirm: 'Are you sure you want to delete this channel?' }, :class => 'btn btn-danger btn-mini'
+    - else
+      %br
+      %h1{:style => 'text-align: center'}
+        %small{:style => 'font-style: italic'} No streams are currently available, check back later!

@@ -1,0 +1,53 @@
+= form_for reply do |f|
+  - if revision.errors.any?
+    .alert.alert-danger
+      #error_explanation
+        %h4 Errors:
+        - revision.errors.full_messages.each do |msg|
+          \&bull; #{msg}
+          %br
+
+  %article.post.row-fluid
+
+    .span12
+      - if !logged_in?
+        .alert
+          You must be logged in to create discussions and replies.
+      - elsif discussion.archived? && !current_user.has_permission?(:categories, discussion.category.id.to_s, :reply_to, :archived, 'all') || (current_user == discussion.user && current_user.has_permission?(:categories, discussion.category.id.to_s, :reply_to, :normal, 'own'))
+        .alert
+          This discussion has been archived and can no longer be modified.
+      - elsif discussion.locked? && !current_user.has_permission?(:categories, discussion.category.id.to_s, :reply_to, :locked, 'all') || (current_user == discussion.user && current_user.has_permission?(:categories, discussion.category.id.to_s, :reply_to, :locked, 'own'))
+        .alert
+          This discussion has been locked from further replies.
+      - elsif current_user.has_permission?(:categories, discussion.category.id.to_s, :reply_to, :normal, 'all') || (current_user == discussion.user && current_user.has_permission?(:categories, discussion.category.id.to_s, :reply_to, :normal, 'own'))
+        = hidden_field_tag :discussion_id, discussion.id
+        = hidden_field_tag :reply_id, params[:reply_id]
+
+        = fields_for revision do |r|
+
+          - body = revision.body
+          - unless body.nil?
+            - body.scan(/{tag=(.*?)}/).each do |t|
+              - uuid = t.first
+              - user = User.where(:uuid => uuid).first
+              - next if user.nil?
+              - body.gsub!("{tag=#{uuid}}", "{tag=#{user.username}}")
+          = r.text_area :body, :value => body, :rel => 'fancy', :style => 'width: 85%; height:' + (params[:controller] == 'replies' ? '500px' : '200px')
+          %br
+          .field
+            - if reply.can_sanction?(current_user, @discussion.category)
+              %label.checkbox{:style => 'float: left; margin-right: 20px;'}
+                = r.check_box :sanctioned, :checked => reply.revision == nil ? '' : reply.revision.sanctioned?
+                Sanctioned
+            - if reply.can_archive?(current_user, @discussion.category)
+              %label.checkbox{:style => 'float: left; margin-right: 20px;'}
+                = r.check_box :archived, :checked => reply.revision == nil ? '' : reply.revision.archived?
+                Archived
+          .clearfix
+        - if reply.discussion != nil
+          = f.submit 'Update Reply', :class => 'btn btn-primary'
+        - else
+          = f.submit 'Post Reply', :class => 'btn btn-primary'
+      - else
+        .alert
+          You cannot reply to discussions in this category.

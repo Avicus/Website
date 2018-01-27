@@ -1,0 +1,7 @@
+- if model.errors.any?
+  .alert.alert-danger
+    #error_explanation
+      %h4 Errors:
+      - model.errors.full_messages.each do |msg|
+        \&bull; #{msg}
+        %br

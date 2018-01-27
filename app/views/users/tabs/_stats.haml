@@ -1,0 +1,48 @@
+.row-fluid
+  .span3
+    %blockquote
+      %h2
+        = number_with_delimiter @total_kills
+        %small kills
+
+  .span3
+    %blockquote
+      %h2
+        = number_with_delimiter @total_deaths
+        %small deaths
+
+  .span3
+    %blockquote
+      %h2
+        = @kd.round(2)
+        %small KD Ratio
+
+  .span3
+    %blockquote
+      %h2
+        = @pvp_kd.round(2)
+        %small PVP KD
+
+- if @objective_data.present?
+  - @objective_data.each_slice(4) do |s|
+    .row-fluid
+      - s.each do |n, a|
+        .span3
+          %blockquote
+            %h2
+              = a
+              %small=n
+- if PrestigeSeason.current_season.present?
+  .row-fluid
+    - if @level_highest.present?
+      .span12
+        %h2{style: 'text-align: center'}
+          Highest Prestige Level
+          = '(' + @level_highest.season.name + ')'
+          %small= @level_highest.level
+  .row-fluid
+    .graphs
+
+:javascript
+  $(".graphs").load("/users/#{@user.name.gsub(' ', '%20')}/graphs");
+

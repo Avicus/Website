@@ -1,0 +1,22 @@
+%blockquote
+  .pull-right
+    = "#{server.player_count} / #{server.max_players}"
+    playing
+  %h3
+    = server.name
+
+  %p
+    - server.players.first(14).each do |user|
+      = link_avatar_to_user(user, 16)
+      = link_to_user(user)
+      &nbsp;&nbsp;
+    - if server.players.size > 14
+      %span.badge
+        = "and #{server.players.size - 14} more"
+
+  - if server.players.empty?
+    %p No players connected.
+
+  - if server.message.presence
+    %span.label.label-info
+      = "Currently playing #{server.message}"

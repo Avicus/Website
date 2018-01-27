@@ -1,0 +1,7 @@
+- unless @name.nil?
+  %h3= @name
+- @charts.each do |c|
+  - if c[:type] == :line
+    = line_chart c[:ref], :height => c[:height], :library => c[:library]
+  - if c[:type] == :bar
+    = bar_chart c[:ref], :height => c[:height], :library => c[:library]

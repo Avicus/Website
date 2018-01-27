@@ -1,0 +1,18 @@
+- if @online
+  .online
+  %span
+    Server:
+    %b
+      = @server.name
+- else
+  .offline
+  %span
+    - if @last_online.nil?
+      Offline
+    - else
+      Last seen
+      = time_ago @last_online
+      ago
+      - if @last_server
+        on
+        = @last_server.name

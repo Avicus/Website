@@ -1,0 +1,64 @@
+= content_for :title, raw(@discussion.title)
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span9
+        %h1
+          = @discussion.title
+      .span3.pull-right
+        - if logged_in?
+          = render 'forums/shared/read_sub', :sub => true
+
+%section.section-padded
+  .container-fluid
+    .row-fluid
+
+      .span9.pull-right
+        .breadcrumb
+          %li
+            %a{:href => '/forums'} Discussions
+            %span.divider /
+          %li
+            %a{:href => "#{@discussion.category_url}"}
+              = @discussion.category.name
+            %span.divider /
+          %li.active
+            = @discussion.title
+
+
+        - if @replies.total_pages > 1
+          = will_paginate @replies
+          %hr{:style => 'margin: 12px 0px'}
+
+        - if @page == 1
+          = render 'post', :discussion => @discussion
+          %hr
+          - @sanctioned.each do |reply|
+            - next if reply.archived? && !reply.can_view?(current_user) || reply.revision.user.nil?
+            = render 'forums/replies/post', :reply => reply
+            %hr
+
+        - @replies.each do |reply|
+          - next if @page == 1 && reply.revision.sanctioned?
+          - next if reply.archived? && !reply.can_view?(current_user) || reply.revision.user.nil?
+          = render 'forums/replies/post', :reply => reply
+          %hr
+
+        - if @replies.total_pages > 1
+          = will_paginate @replies
+          %br
+
+        = render 'forums/replies/form', :revision => @revision == nil ? Revision.new : @revision, :reply => @reply == nil ? Reply.new : @reply, :discussion => @discussion, :show_archive => false
+
+      .span3.sidebar.pull-left
+        = render 'forums/shared/navigation', :forums => @forums, :categories => @categories, :active => @category.id
+
+:javascript
+  if (window.location.hash) {
+    $(window.location.hash).prev("hr").addClass("highlight").attr("title", "Linked Reply");
+  }
+:css
+  hr {
+    margin-top: 12px;
+  }

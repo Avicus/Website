@@ -1,0 +1,123 @@
+= content_for :title, @tournament.name
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span9
+        %h1
+          Tournament Information
+
+%section.section
+  .container-fluid
+    .row-fluid
+      - if @tournament.header == 1
+        .page-header
+          %h2
+            = @tournament.name
+      - else
+        %br
+
+      %p
+        = raw @tournament.about
+
+      %br
+
+      - if @tournament.open_at > Time.now
+        .alert.alert-info
+          %b
+            %i.fa.fa-info-circle
+            Team registration for this tournament opens in
+            = time_ago @tournament.open_at
+            on
+            = (time_in_words @tournament.open_at, true) + '!'
+      - else
+        .page-header
+          %h2 Registration
+
+        - if @tournament.allow_loners
+          .alert.alert-info
+            %i.fa.fa-check-circle
+            %b Don't have a team?
+            This tournament allows you to register without one!
+
+        - if @tournament.close_at > Time.now
+          .alert.alert-warning
+            %i.fa.fa-info-circle
+            %b
+              Team registration for this tournament closes in
+              = time_ago @tournament.close_at
+              on
+              = (time_in_words @tournament.close_at, true) + '!'
+        - else
+          .alert.alert-danger
+            %i.fa.fa-exclamation-circle
+            %b
+              Team registration for this tournament closed
+              = time_ago @tournament.close_at
+              ago on
+              = (time_in_words @tournament.close_at, true) + '!'
+
+        %table.table-bordered.table-striped.table
+          %tr
+            %th Team
+            %th Members
+            %th Status
+            %th Registered
+          - @tournament.registrations.each do |reg|
+            - if reg.team == nil
+              - next
+            %tr{:class => (reg.status == 1 ? 'success' : 'warning')}
+              %td
+                = raw reg.team.link
+                - if @tournament.can_execute?(current_user, :toggle_registrations) || @tournament.can_execute?(current_user, :view_registrations)
+                  .btn-group.pull-right
+                    - if @tournament.can_execute?(current_user, :toggle_registrations)
+                      = link_to 'Toggle Accept', tournament_registration_toggle_path(@tournament, reg), :class => 'btn btn-mini'
+                    - if @tournament.can_execute?(current_user, :toggle_registrations)
+                      = link_to 'View', tournament_registration_path(@tournament, reg), :class => 'btn btn-mini'
+              %td
+                .badge.badge-info
+                  = reg.team.global? ? 'Global' : reg.members(true).size
+                - reg.members(true).each do |user|
+                  %a{:href => user.path, :style => 'text-decoration: none'}
+                    %img.img-rounded{:src => user.avatar(40), :style => 'margin: 4px 2px; width: 20px', :rel => 'tooltip', :title => user.name}
+              %td
+                = reg.status_text
+              %td
+                %span{:rel => 'tooltip', :title => time_ago(reg.created_at) + ' ago'}
+                  = time_in_words reg.created_at, true
+
+
+        .row-fluid
+          .span3
+            %blockquote
+              %h2
+                = @tournament.min
+                %small minimum team size
+          .span3
+            %blockquote
+              %h2
+                = @tournament.max
+                %small maximum team size
+
+        - if logged_in?
+          - if @tournament.close_at > Time.now
+            - if current_user.team != nil && current_user.team.can_execute?(current_user, :actions, :register)
+              = link_to 'Register (Team)', new_tournament_registration_path(@tournament), :class => 'btn btn-success'
+            - if @tournament.allow_loners
+              = link_to 'Register (Alone)', tournament_loner_path(@tournament), :class => 'btn btn-success'
+          -else
+            %button.btn.btn-danger.disabled
+              Registration Closed
+
+
+
+        %a.btn.btn-info{:href => '/tournaments'} Tournaments
+        - if @tournament.can_execute?(current_user, :update) || @tournament.can_execute?(current_user, :destroy)
+          .btn-group
+            - if @tournament.can_execute?(current_user, :update)
+              = link_to 'Edit', edit_tournament_path(@tournament), :class => 'btn btn-primary'
+            - if @tournament.can_execute?(current_user, :destroy)
+              = link_to 'Delete', @tournament, method: :delete, data: { confirm: 'Are you sure you want to delete this tournament?' }, :class => 'btn btn-danger'
+      %p
+        %br

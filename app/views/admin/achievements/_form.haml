@@ -1,0 +1,22 @@
+= form_for([:admin, @achievement]) do |f|
+  - if @achievement.errors.any?
+    .alert.alert-danger
+      #error_explanation
+        %h4 Errors:
+        %ul
+          - @achievement.errors.full_messages.each do |msg|
+            %li #{msg}
+
+  .field{style: 'color: red'}
+    = f.label :slug, "Slug (DON'T CHANGE THIS IF YOU DON'T HAVE CODE ACCESS)"
+    = f.text_field :slug, :disabled => @editable.include?(:slug) ? nil : ''
+  .field
+    = f.label :name
+    = f.text_field :name, :disabled => @editable.include?(:name) ? nil : ''
+  .field
+    = f.label :description
+    = f.text_field :description, :style => 'width: 507px;', :disabled => @editable.include?(:description) ? nil : ''
+
+
+  .actions
+    = f.submit :class => 'btn btn-success'

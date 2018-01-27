@@ -1,0 +1,67 @@
+= content_for :title, 'Map: ' + @map.name
+
+%section.section.section-alt.section-dark
+  .map-banner{:style => "background: url(#{@map.banner_path})"}
+    .overlay
+      %h1
+        = @map.name
+        %small
+          = @map.version
+      %h3
+        = 'Author'.pluralize(@map.authors.keys.size) + ':'
+      - @map.authors.each do |uuid, cont|
+        - u = User.find_by_uuid(uuid)
+        = u.nil? ? '   N/A   ' : link_avatar_to_user(u, 40, style: 'position: relative', :rel => 'tooltip', :title => u.name + "#{strip_tags(cont)}")
+  .span3.pull-right{style: 'padding-top: 14px'}
+    %select{'onchange': 'location = this.options[this.selectedIndex].value;'}
+      = options_for_select(@category_select)
+
+%section.section-padded
+  .container-fluid{style: 'padding-top: 34px'}
+    .row-fluid
+      .span4
+        %h2{style: 'margin'} Teams
+        %hr{style: 'margin: 0'}
+        .span12
+          = raw @map.teams.join('')
+      .span4
+        %h2{style: 'margin'} Objectives
+        %hr{style: 'margin: 0'}
+        .span12
+          = raw @map.objectives.join('<br>')
+      .span4
+        %h2{style: 'margin'} Ratings
+        %hr{style: 'margin: 0'}
+        %select{'onchange': "$('#ratings').load('/maps/map/#{@map.slug}/ratings/' + this.options[this.selectedIndex].value);"}
+          = options_for_select(@map.versions, selected: 'current')
+        #ratings
+          Loading Ratings...
+    - if current_user.has_permission?(:maps_controllers, :view, :feedback, true)
+      %br
+      .row-fluid
+        %h2 Feedback
+        .table-responsive
+          %table.table.table-bordered.table-striped.table-no-sort.no-margin
+            %thead
+              %tr
+                %th{:width => '5%'} Version
+                %th{:width => '5%'} Rating
+                %th{:width => '10%'} Created
+                %th{:width => '80%'} Feedback
+            %tbody
+              - @map.ratings_with_feedback('all').each do |r|
+                %tr
+                  %td
+                    = r.map_version
+                  %td
+                    = r.rating
+                  %td
+                    = time_ago_in_words(r.created_at) + 'ago'
+                  %td
+                    = r.feedback
+
+:javascript
+  $('[rel=tooltip]').tooltip({
+      placement: 'right'
+  });
+  $("#ratings").load("/maps/map/#{@map.slug}/ratings/current");

@@ -1,0 +1,3 @@
+[submodule "public/rules"]
+	path = public/rules
+	url = git@github.com:Avicus/Rules.git

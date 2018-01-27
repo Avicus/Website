@@ -1,0 +1,15 @@
+= content_for :title, 'Staff'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1 Staff
+        %p The people that make the server possible, whether it be developing, maintaining or moderating.
+
+
+%section.section.post.section-padded.section-last
+  .container-fluid
+    - Rank.where(:is_staff => true).order('priority DESC').each do |rank|
+      - if rank.memberships.size > 0
+        = render 'rank', :rank => rank

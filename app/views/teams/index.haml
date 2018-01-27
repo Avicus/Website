@@ -1,0 +1,60 @@
+= content_for :title, 'Teams'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span5
+        %h1 Teams
+        %p Create a team to compete in tournaments!
+      .span3.pull-right
+        %br
+        - if logged_in? && current_user.team != nil
+          %a.pull-right.btn.btn-primary{:href => current_user.team.path}
+            My Team
+        - else
+          %a.pull-right.btn.btn-primary{:href => '/teams/new'}
+            New Team
+
+%section.section-padded
+  .container-fluid
+    .table-responsive
+      %table.table.table-bordered.table-striped
+        %tr
+          %th Team Name
+          %th Leaders
+          %th Members
+          %th Created
+          - if current_user.has_permission?(:teams, :global, :view_reservation_count, true)
+            %th Reservations
+
+        - @teams.each do |team|
+          - next if team.members.size == 0
+          %tr
+            %td
+              =raw team.link
+            %td
+              - leaders = team.members.where(:role => 'leader').order('created_at DESC')
+              - names = []
+              - leaders.each do |member|
+                - names.push(link_to_user(member.user))
+              =raw names.first(4).join(', ')
+            %td
+              = team.members.size
+            %td
+              = time_ago team.created_at
+              ago
+            - if current_user.has_permission?(:teams, :global, :view_reservation_count, true)
+              %td
+                = team.reservations
+    = will_paginate(@teams)
+
+:css
+  td {
+    vertical-align:middle !important;
+  }
+  tr.no-padding td {
+  }
+
+  .tooltip.in {
+    opacity: 1.0;
+  }

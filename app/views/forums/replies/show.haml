@@ -1,0 +1,22 @@
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span6
+        %h1 Replies
+        %p
+          = link_to 'Back to Discussion', find_reply_path(@reply)
+
+%section.section.section-padded
+  .container-fluid
+    .row-fluid
+      .span9.pull-right
+        = render 'post', :reply => @reply
+        %hr
+        - @reply.replies.each do |reply|
+          = render 'post', :reply => reply
+          %hr
+        - if @reply.replies.size == 0
+          %p.text-center No users have replied to this post.
+
+      .span3.sidebar.pull-left
+        = render 'forums/shared/navigation', :forums => @forums, :categories => @categories, :active => @category.id

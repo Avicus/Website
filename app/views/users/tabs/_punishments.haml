@@ -1,0 +1,48 @@
+- if Punishment.can_create?(current_user)
+  %a.btn.btn-success.pull-right.open-punish{:style => 'margin-top: 10px'}
+    Punish
+    &nbsp;
+    %i.fa.fa-caret-down
+      :javascript
+        $(".open-punish").click(function () {
+          $("#punish").slideToggle(200);
+        })
+  %br
+  %br
+  #punish{style: 'display: none'}
+    = form_tag punish_path, :method => 'post', :class => 'form-inline' do
+      .container-fluid
+        .row-fluid
+          .span4
+            Staff:
+            = text_field_tag 'punishment[staff]', current_user.name, :class => 'typeahead', :autocomplete => 'off', style: 'width:97%', :readonly => 'true'
+          .span4
+            Type:
+            = select_tag 'punishment[type]', options_for_select(@punish_types), style: 'width: 100%'
+          .span4
+            Expires:
+            = text_field_tag 'punishment[expires]', nil, id: 'datepicker', style: 'width: 100%'
+        .row-fluid
+          .span12
+            Reason:
+            = text_field_tag 'punishment[reason]', nil, style: 'width: 100%'
+
+        %br
+          .row.fluid
+          %div.alert.span12{style: 'width:100%; margin-left: 0px;'}
+            %strong Info:
+            Kicks will be logged as offline infractions. Expiration date for warns and kicks will be ignored.
+
+          = hidden_field_tag "punish[#{@user.id}]"
+          = submit_tag 'Punish', :class => 'btn btn-success'
+
+  %br
+  %br
+
+
+= render 'shared/punishments', :punishments => @punishments
+
+:javascript
+  jQuery('#datepicker').datetimepicker({
+      format: 'm/d/Y H:i',
+  });

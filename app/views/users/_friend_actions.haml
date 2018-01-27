@@ -1,0 +1,16 @@
+- if current_user.requests.include?(@user)
+  %a.btn.btn-warning.pull-right{:href => "/users/#{@user.name}/friend/cancel?u=#{current_user.id}"}
+    %i.fa.fa-star-half-o
+    Cancel Request
+- elsif current_user.friends.include?(@user)
+  %a.btn.pull-right{:href => "/users/#{@user.name}/friend/remove?u=#{current_user.id}"}
+    %i.fa.fa-star-o
+    Remove Friend
+- elsif @user.requests.include?(current_user)
+  %a.btn.btn-success.pull-right{:href => "/users/#{@user.name}/friend/accept?u=#{current_user.id}"}
+    %i.fa.fa-star
+    Accept Friend
+- else @user.requests.include?(current_user)
+  %a.btn.btn-primary.pull-right{:href => "/users/#{@user.name}/friend/add?u=#{current_user.id}"}
+    %i.fa.fa-star
+    Add Friend

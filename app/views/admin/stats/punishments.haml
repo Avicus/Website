@@ -1,0 +1,19 @@
+%h3 Punishments
+%table.table.table-bordered.table-striped
+  %tr
+    %th
+      Type
+    %th
+      Count
+    %th
+      Share
+  - @punishments_by_type.each do |type,count|
+    %tr
+      %td
+        = type.capitalize
+      %td
+        = count
+      %td
+        = (100 * count.to_d / Punishment.count).round(2).to_s + '%'
+
+= bar_chart @punishments, :height => '700px'

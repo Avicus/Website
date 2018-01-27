@@ -1,0 +1,10 @@
+/*
+ *= require_self
+ *= require_tree
+ *= stub login
+ *= require peek
+ *= require simple_calendar
+ *= require font-awesome
+ *= require peek/views/performance_bar
+ *= require peek/views/rblineprof
+ */

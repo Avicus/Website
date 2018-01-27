@@ -1,0 +1,40 @@
+.page-header
+  %h3
+    User search
+%blockquote
+  %p
+    %h4
+      = link_avatar_to_user(@user, 16)
+      = link_to_user(@user)
+
+  %b Player stats:
+  %p
+    - if @user.leaderboard_entries.empty?
+      No statistics reported.
+    - else
+      .table-responsive
+        %table.table.table-bordered.table-striped
+          %tr
+            %th Period
+            %th Kills
+            %th Deaths
+            %th K/D
+            %th Monuments
+            %th Wools
+            %th Time Online
+          - @user.leaderboard_entries.order(:period).each do |entry|
+            %tr
+              %td
+                = period_to_name(entry.period)
+              %td
+                = number_with_delimiter(entry.kills)
+              %td
+                = number_with_delimiter(entry.deaths)
+              %td
+                = number_with_delimiter(entry.kd_ratio)
+              %td
+                = number_with_delimiter(entry.monuments)
+              %td
+                = number_with_delimiter(entry.wools)
+              %td
+                = seconds_to_time(entry.time_online)

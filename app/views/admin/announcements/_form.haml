@@ -1,0 +1,37 @@
+= form_for([:admin, @announcement]) do |f|
+  - if @announcement.errors.any?
+    .alert.alert-danger
+      #error_explanation
+        %h4 Errors:
+        %ul
+          - @announcement.errors.full_messages.each do |msg|
+            %li #{msg}
+  .field
+    = f.label :body, 'Announcement text'
+    = f.text_field :body, :value => @announcement.body.presence ? @announcement.body.gsub("\n", '\n') : '', :disabled => @editable.include?(:body) ? nil : ''
+  %label.checkbox
+    = f.check_box :enabled, :disabled => @editable.include?(:enabled) ? nil : ''
+    Enabled
+  %label.checkbox
+    = f.check_box :motd, :disabled => @editable.include?(:motd) ? nil : ''
+    Server MOTD
+  %label.checkbox
+    = f.check_box :motd_format, :disabled => @editable.include?(:motd_format) ? nil : ''
+    Set as format of MOTD
+  %label.checkbox
+    = f.check_box :popup, :disabled => @editable.include?(:popup) ? nil : ''
+    Server join pop up
+  %label.checkbox
+    = f.check_box :lobby, :disabled => @editable.include?(:lobby) ? nil : ''
+    Lobby messages
+  %label.checkbox
+    = f.check_box :tips, :disabled => @editable.include?(:tips) ? nil : ''
+    Periodic in game tips
+  %label.checkbox
+    = f.check_box :web, :disabled => @editable.include?(:web) ? nil : ''
+    Website ribbon and notice
+  .field
+    = f.label :permission, 'Required view permission'
+    = f.text_field :permission, :disabled => @editable.include?(:permission) ? nil : ''
+  .actions
+    = f.submit :class => 'btn btn-success'

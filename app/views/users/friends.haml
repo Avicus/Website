@@ -1,0 +1,76 @@
+:css
+  .tooltip-inner {
+    max-width: 600px;
+  }
+
+= content_for :title, 'Friends'
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1 Friends
+        %p The people that you have friendships with.
+
+%section.section-padded
+  .container-fluid
+    - if @online > 0
+      .row-fluid
+        %h2{style: 'color: green'}
+          Online Friends
+          %small= @online
+      = @online_by_server.each_slice(4) do |servers|
+        .row-fluid
+          - servers.each do |server, users|
+            %blockquote
+              %h3= server
+              - users.each do |u|
+                .friend{:rel => 'tooltip', :title => u.name}
+                  - if current_user.id == @user.id
+                    %a.friend-actions{href: "/users/#{u.name}/friend/remove?u=#{current_user.id}", :style => 'text-decoration: none; color: red; top: -5px'}
+                      %i.fa.fa-times
+                  %a{:href => u.path, :style => 'text-decoration: none'}
+                    %img.img-rounded{:src => u.avatar(66)}
+
+      %hr
+
+    - if @friends.size > 0
+      .row-fluid
+        %h2{style: 'color: red'}
+          Offline Friends
+          %small= @friends.size
+      .row-fluid
+        - @friends.each do |u|
+          .friend{:rel => 'tooltip', :title => u.name}
+            - if current_user.id == @user.id
+              %a.friend-actions{href: "/users/#{u.name}/friend/remove?u=#{current_user.id}", :style => 'text-decoration: none; color: red; top: -5px'}
+                %i.fa.fa-times
+            %a{:href => u.path, :style => 'text-decoration: none'}
+              %img.img-rounded{:src => u.avatar(66)}
+
+    - if logged_in? && @user.id == current_user.id && (@pendingSent.size > 0 || @pendingRecieved.size > 0)
+      %hr
+      .row-fluid
+        .span6
+          .row-fluid
+            %h2{style: 'color: orange', :rel => 'tooltip', :title => 'Pending friend requests that you have sent. (Click the X to cancel the request)'}
+              Sent Friend Requests
+              %small= @pendingSent.size
+          .row-fluid
+            - @pendingSent.each do |u|
+              .friend{:rel => 'tooltip', :title => u.name}
+                %a.friend-actions{href: "/users/#{u.name}/friend/cancel?u=#{current_user.id}", :style => 'text-decoration: none; color: red; top: -5px'}
+                  %i.fa.fa-times
+                %a{:href => u.path, :style => 'text-decoration: none'}
+                  %img.img-rounded{:src => u.avatar(66)}
+        .span6
+          .row-fluid
+            %h2{style: 'color: orange', :rel => 'tooltip', :title => 'Pending friend requests that you have received. (Click the + to accept the request)'}
+              Pending Friend Requests
+              %small= @pendingRecieved.size
+          .row-fluid
+            - @pendingRecieved.each do |u|
+              .friend{:rel => 'tooltip', :title => u.name}
+                %a.friend-actions{href: "/users/#{u.name}/friend/accept?u=#{current_user.id}", :style => 'text-decoration: none; color: green; top: -5px'}
+                  %i.fa.fa-plus
+                %a{:href => u.path, :style => 'text-decoration: none'}
+                  %img.img-rounded{:src => u.avatar(66)}

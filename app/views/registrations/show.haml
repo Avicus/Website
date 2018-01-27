@@ -1,0 +1,64 @@
+= content_for :title, 'Tournament Registration'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1 Tournament Registration
+
+
+%section.section-padded.section-last
+  .container-fluid
+    %p
+      %strong Tournament:
+      = link_to @registration.tournament.name, @registration.tournament
+    %p
+      %strong Team:
+      = raw @registration.team.link
+    %p
+      %strong Status:
+      = @registration.status_text
+
+    %p
+      %b Members:
+      = @registration.members(false).size.to_s + '/' + @tournament.max.to_s
+    .row-fluid
+      .span5
+        %table.table.table-bordered.table-striped
+          %tr
+            %th User
+            %th Status
+          - @registration.members(false).each do |user|
+            %tr
+              %td
+                %a{:href => user.path}
+                  %img.round-mini{:src => user.avatar(40), :style => 'width: 20px'}
+                &nbsp;
+                = link_to_user(user)
+              %td
+                = @registration.members(true).include?(user) ? 'Accepted' : 'Notified'
+                - if @registration.team.can_execute?(current_user, :kick) || current_user == user
+                  %a.btn.btn-danger.btn-mini.pull-right{:href => tournament_registration_uninvite_path(@tournament, @registration) + "?user=#{user.id}"}
+                    %i.fa.fa-remove
+
+    - unless @registration.team.global?
+      %p
+        %b Invite:
+      - invitees = []
+      - @registration.team.users.each do |user|
+        - if !@registration.members(false).include?(user)
+          - invitees += [[user.name, user.id]]
+
+      - if invitees.size == 0
+        %p
+          No more team members to invite!
+      - else
+        = form_tag tournament_registration_invite_path(@tournament, @registration) do
+          .row-fluid
+            .span2
+              = select_tag :user, options_for_select(invitees)
+              = submit_tag 'Invite', :class => 'btn btn-primary'
+      %hr
+      %p
+        = link_to 'Cancel Registration', [@tournament, @registration], method: :delete, data: { confirm: 'Are you sure you want to cancel this registration?' }, :class => 'btn btn-danger'
+    %br

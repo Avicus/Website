@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+APP_PATH = File.expand_path('../config/application', __dir__)
+require_relative '../config/boot'
+
+
+# Add some shortcuts for "rails server":
+#
+#     rails main       # public website
+#     rails api        # API
+
+if %w[main api].include? ARGV[0]
+  ENV['APP_MODE'] = ARGV[0]
+  puts "Running #{ENV['APP_MODE']}"
+  ARGV[0] = 'server'
+end
+
+case ENV['APP_MODE']
+  when 'main'
+    port = 3000
+    pid = 'tmp/pids/main.pid'
+  when 'api'
+    port = 3001
+    pid = 'tmp/pids/api.pid'
+  else
+    port = pid = nil
+end
+
+ENV['PORT'] = port.to_s if port && ARGV.none?{|arg| arg =~ /^(-p|-p)/ }
+ARGV << "--pid=#{pid}" if pid && ARGV.none?{|arg| arg =~ /^(-P|--pid)/ }
+
+require 'rails/commands'

@@ -1,0 +1,59 @@
+- if (defined? active) == nil
+  - active = nil
+
+%ul.nav.nav-list.nav-indent
+  %li.nav-header
+    Main
+  %li{:class => active == 'recent' ? 'active' : ''}
+    %a{:href => '/forums'}
+      %span.title Recent Discussions
+
+    - if logged_in?
+
+      %li{:title => 'Discussions that you have subscribed to.', :class => active == 'my_subscriptions' ? 'active' : ''}
+        %a{:href => my_subscriptions_path}
+          - unread = 0
+          - if unread > 0
+            %span.label.label-warning{:rel => 'tooltip', :title => "#{unread} unread posts"}
+              = unread
+          %span.title My Subscriptions
+
+      %li{:title => 'Discussions that you have initiated.', :class => active == 'my_discussions' ? 'active' : ''}
+        %a{:href => my_discussions_path}
+          - unread = 0
+          - if unread > 0
+            %span.label.label-warning{:rel => 'tooltip', :title => "#{unread} unread posts"}
+              = unread
+          %span.title My Discussions
+
+  - forums.each do |forum|
+    - list = categories.where(forum_id: forum.id).order('priority DESC')
+    - list = ForumsHelper.filter_categories(current_user, list)
+    - next if list.empty?
+    %li.nav-header
+      = forum.name
+
+    - list.each do |cat|
+
+      %li{:class => active == cat.id ? 'active' : ''}
+        %a{:href => category_path(cat), :title => cat.desc.presence ? cat.desc : ''}
+          %span.title
+            = cat.name
+
+
+%hr
+%h3.sidebar-header
+  = pluralize(online_users.size, 'Online user')
+= raw online_users.collect { |user| link_to_user(user) }.join(', ')
+%hr
+%h3.sidebar-header Discord
+%script{:src => '//cdn.jsdelivr.net/discord-widget/1.0/discord-widget.min.js', :type => 'text/javascript'}
+:javascript
+  discordWidget.init({
+      serverId: 'your-id',
+      hideChannels: [''],
+      showAllUsers: true,
+      allUsersDefaultState: false,
+  });
+  discordWidget.render();
+.discord-widget

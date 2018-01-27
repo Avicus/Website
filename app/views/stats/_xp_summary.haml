@@ -1,0 +1,58 @@
+.page-header
+  %h3
+    User search
+%blockquote
+  %p
+    %h4
+      = link_avatar_to_user(@user, 16)
+      = link_to_user(@user)
+
+  %b Player stats:
+  %p
+    - if @user.experience_leaderboard_entries.empty?
+      No statistics reported.
+    - else
+      .table-responsive
+        %table.table.table-bordered.table-striped
+          %tr
+            %th Period
+            %th % of MAX
+            %th Prestige
+            %th Total XP
+            %th Nebula XP
+            %th KOTH XP
+            %th CTF XP
+            %th TDM XP
+            %th Elimination XP
+            %th SkyWars XP
+            %th Walls XP
+            %th Arcade XP
+          - @user.experience_leaderboard_entries.order(:period).each do |entry|
+            %tr
+              %td
+                = period_to_name(entry.period)
+              %td
+                = (entry.level / 10.0).round(2)
+              %td
+                - if entry.prestige_level > 15
+                  %label.label-info MAX
+                - else
+                  = number_with_delimiter(entry.prestige_level)
+              %td
+                = number_with_delimiter(entry.xp_total)
+              %td
+                = number_with_delimiter(entry.xp_nebula)
+              %td
+                = number_with_delimiter(entry.xp_koth)
+              %td
+                = number_with_delimiter(entry.xp_ctf)
+              %td
+                = number_with_delimiter(entry.xp_tdm)
+              %td
+                = number_with_delimiter(entry.xp_elimination)
+              %td
+                = number_with_delimiter(entry.xp_sw)
+              %td
+                = number_with_delimiter(entry.xp_walls)
+              %td
+                = number_with_delimiter(entry.xp_arcade)

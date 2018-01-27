@@ -1,0 +1,55 @@
+= content_for :title, 'Appeals'
+
+%section.section-dark.main-header
+  .container-fluid
+    .row-fluid
+      .span12
+        %h1
+          Appeals
+          .pull-right
+            = link_to 'Submit an Appeal', '/appeal', class: 'btn btn-primary'
+        %p Appeal punishments that you feel are invalid.
+
+%section.section-padded
+  .container-fluid
+    .pull-right
+      .filtered
+        = submit_tag 'All', :onclick => "location.href = '#{appeals_url}'; return false;", class: 'btn btn-success'
+        = submit_tag 'Only Open', :onclick => "location.href = '#{appeals_url}?open=1'; return false;", class: 'btn btn-success'
+        = submit_tag 'Only Escalated', :onclick => "location.href = '#{appeals_url}?escalated=1'; return false;", class: 'btn btn-warning'
+    %br
+    %br
+    - if @appeals.empty?
+      .text-center.center-block
+        %i No appeals to display
+    - else
+      .table-responsive
+        %table.table.table-striped.table-bordered
+          %colgroup
+            %col{:class => 'grey'}
+          %thead
+            %tr
+              %th{:style => 'width: 10%'} Punishment ID
+              %th{:style => 'width: 25%'} User
+              %th{:style => 'width: 25%'} Last action by
+              %th{:style => 'width: 10%'} Status
+              %th{:style => 'width: 26%'} Actions
+          %tbody
+            - @appeals.each do |appeal|
+              - next unless appeal.can_execute?(current_user, :view)
+              - next if appeal.actions.first.nil?
+              %tr
+                %td
+                  = link_to appeal.punishment.id, punishment_path(appeal.punishment)
+                %td
+                  = link_avatar_to_user(appeal.actions.first.user, 16, :class => 'img-rounded') + ' ' + link_to_user(appeal.actions.first.user)
+                %td
+                  = link_avatar_to_user(appeal.actions.last.user, 16, :class => 'img-rounded') + ' ' + link_to_user(appeal.actions.last.user)
+                %td
+                  = appeal.status
+                %td
+                  .group
+                    = link_to 'View Appeal', appeal_path(appeal), :class => 'btn btn-mini btn-success'
+                    = link_to 'Other Appeals by User', appeal.actions.first.user.path + '#appeals', :class => 'btn btn-mini btn-info'
+      %p
+        = will_paginate @appeals

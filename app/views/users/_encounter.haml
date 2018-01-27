@@ -1,0 +1,19 @@
+- if pvp.cause != 0
+  %img.round-mini{:src => pvp.cause_user.avatar(40), :style => 'width: 20px'}
+
+- if user.id != pvp.cause
+  - if pvp.cause == 0
+    natural causes
+  - else
+    = link_to_user(pvp.cause_user)
+
+killed
+
+%img.round-mini{:src => pvp.user.avatar(40), :style => 'width: 20px'}
+
+- if user.id != pvp.user_id
+  = link_to_user(pvp.user)
+
+%small
+  = time_ago pvp.created_at
+  ago

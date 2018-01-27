@@ -1,0 +1,45 @@
+= form_for([:admin, @server_category]) do |f|
+  - if @server_category.errors.any?
+    .alert.alert-danger
+      #error_explanation
+        %h4 Errors:
+        %ul
+          - @server_category.errors.full_messages.each do |msg|
+            %li #{msg}
+
+  .field
+    = f.label :name
+    = f.text_field :name, :disabled => @editable.include?(:name) ? nil : ''
+
+  %h4 Communication Options
+  .field
+    - ['staff_chat', 'punishments', 'pms', 'reports', 'friends'].each do |option|
+      %label.checkbox{:style => 'float: left; margin-right: 20px;'}
+        = check_box_tag "server_category[communication_options][publish][#{option}]", true, @server_category.has_option_sub?(:communication_options, 'publish', option)
+        = titleize('Publish ' + option.gsub('_', ' ') + ' Globally')
+    - ['staff_chat', 'punishments', 'pms', 'reports', 'friends'].each do |option|
+      %label.checkbox{:style => 'float: left; margin-right: 20px;'}
+        = check_box_tag "server_category[communication_options][external][#{option}]", true, @server_category.has_option_sub?(:communication_options, 'external', option)
+        = titleize('Receive External ' + option.gsub('_', ' '))
+    .clearfix
+    %label.input{:style => 'float: left; margin-right: 20px;'}
+      = text_field_tag 'server_category[communication_options][prefix]', @server_category.get_option(:communication_options, 'prefix')
+      Remote Prefix
+    .clearfix
+
+  %h4 Infraction Options
+  .field
+    - ['warns', 'kicks', 'bans', 'temp_bans'].each do |option|
+      %label.checkbox{:style => 'float: left; margin-right: 20px;'}
+        = check_box_tag "server_category[infraction_options][publish][#{option}]", true, @server_category.has_option_sub?(:infraction_options, 'publish', option)
+        = titleize('Record ' + option.gsub('_', ' '))
+  .clearfix
+  .field
+    - ['warns', 'kicks', 'bans', 'temp_bans'].each do |option|
+      %label.checkbox{:style => 'float: left; margin-right: 20px;'}
+        = check_box_tag "server_category[infraction_options][ignore][#{option}]", true, @server_category.has_option_sub?(:infraction_options, 'ignore', option)
+        = titleize('Ignore ' + option.gsub('_', ' '))
+    .clearfix
+
+  .actions
+    = f.submit :class => 'btn btn-success'
