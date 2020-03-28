@@ -47,7 +47,7 @@
           = f.label :reason, 'Reason'
           = f.text_field :reason, :style => 'width: 100%', :disabled => @editable.include?(:reason) ? nil : ''
         %label.checkbox
-          = f.check_box :appealed, :disabled => @editable.include?(:appealed) ? nil : ''
+          = f.check_box :appealed
           Appealed
         .actions
           = f.submit :class => 'btn btn-success'
