@@ -38,11 +38,11 @@ gem 'puma'
 
 # Daemon
 gem 'daemons'
-gem 'discordrb', git: 'git@github.com:meew0/discordrb.git'
+gem 'discordrb', git: 'https://github.com/meew0/discordrb.git'
 
 # API
 gem 'graphql'
-gem 'graphql_java_gen', git: 'git@github.com:Avicus/graphql_java_gen.git'
+gem 'graphql_java_gen', git: 'https://github.com/Avicus/graphql_java_gen.git'
 gem 'graphql-batch'
 
 # Peek
