@@ -13,8 +13,24 @@
 ## How to create DB and create TABLES:
 * Run `rake db:setup`
 
-## How to Test:
-* Install required gems with `bundle install`
-* Install nokogiri manually (https://nokogiri.org/)
-* Install mysql2 manually then run `sudo apt-get install libmysqlclient-dev` and `sudo gem install mysql2 -- --without-mysql-lib=${mysql-dir}/lib`
+
 * Run the `localhost:3000` server via `rails s`
+
+
+## Installation
+### Installing Ruby
+ * Install RVM Ruby Version Manager `gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 \ 7D2BAF1CF37B13E2069D6956105BD0E739499BDB`
+  * Download the RVM installer script and install the RVM `curl -sSL https://get.rvm.io | bash -s stable --ruby`
+  * Once all installation is completed, load the RVM `source /usr/local/rvm/scripts/rvm`
+  * Update RVM to latest stable `rvm get stable --autolibs=enable`
+  * Install Ruby `rvm install ruby-2.7.1`
+  * Make the Ruby 2.7.1 as the default Ruby version on your system `rvm --default use ruby-2.7.1`
+  * Update RubyGem to latest version `gem update --system`
+  * Install Ruby on Rails `gem install rails`
+### Installing MySQL, Redis and Packages
+  * Install NodeJS `sudo apt install nodejs redis libmysqlclient-dev`
+  * Install MySQL `gem install mysql2`
+  * Install nokogiri `gem install nokogiri`
+  * Update bundler and install required gems `bundle update --bundler`
+### Configure database.yml
+  * 
